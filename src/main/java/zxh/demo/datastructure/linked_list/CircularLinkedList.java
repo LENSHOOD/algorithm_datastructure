@@ -2,35 +2,12 @@ package zxh.demo.datastructure.linked_list;
 
 import static java.util.Objects.isNull;
 
-import lombok.AllArgsConstructor;
-
 /**
  * CircularLinkedList:
  * @author zhangxuhai
  * @date 2020/7/12
 */
-public class CircularLinkedList<E> implements LinkedList<E> {
-    private Node<E> head = null;
-    private Node<E> tail = null;
-
-    @AllArgsConstructor
-    private static class Node<E> {
-        private Node<E> next;
-        private E data;
-
-        boolean dataEquals(E element) {
-            if (data == element) {
-                return true;
-            }
-
-            if (isNull(data)) {
-                return false;
-            }
-
-            return data.equals(element);
-        }
-    }
-
+public class CircularLinkedList<E> extends AbstractLinkedList<E> {
     @Override
     public void addHead(E element) {
         if (isEmpty()) {
@@ -56,77 +33,14 @@ public class CircularLinkedList<E> implements LinkedList<E> {
     }
 
     @Override
-    public void add(int index, E element) {
-        if (index > size() || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        if (index == size()) {
-            addTail(element);
-            return;
-        }
-
-        if (index == 0) {
-            addHead(element);
-            return;
-        }
-
+    protected void addNode(int index, E element) {
         Node<E> previousNode = getNode(index - 1);
         Node<E> originalNode = getNode(index);
         previousNode.next = new Node<>(originalNode, element);
     }
 
     @Override
-    public int indexOf(E element) {
-        int index = -1;
-        if (isEmpty()) {
-            return index;
-        }
-
-        Node<E> currentNode = head;
-        for(;;) {
-            index++;
-            if (index == size() || currentNode.dataEquals(element)) {
-                break;
-            }
-            currentNode = currentNode.next;
-        }
-
-        if (index == size()) {
-            return -1;
-        }
-
-        return index;
-    }
-
-    @Override
-    public E getHead() {
-        if (isEmpty()) {
-            throw new UnsupportedOperationException();
-        }
-
-        return head.data;
-    }
-
-    @Override
-    public E getTail() {
-        if (isEmpty()) {
-            throw new UnsupportedOperationException();
-        }
-
-        return tail.data;
-    }
-
-    @Override
-    public E get(int index) {
-        if (index >= size() || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        return getNode(index).data;
-    }
-
-    private Node<E> getNode(int index) {
+    protected Node<E> getNode(int index) {
         if (index < 0) {
             index = index + size();
         }
@@ -173,21 +87,7 @@ public class CircularLinkedList<E> implements LinkedList<E> {
     }
 
     @Override
-    public void remove(int index) {
-        if (index >= size() || index < 0) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        if (index == size() - 1) {
-            removeTail();
-            return;
-        }
-
-        if (index == 0) {
-            removeHead();
-            return;
-        }
-
+    protected void removeNode(int index) {
         Node<E> previousNode = getNode(index - 1);
         Node<E> originalNode = getNode(index);
         previousNode.next = originalNode.next;
