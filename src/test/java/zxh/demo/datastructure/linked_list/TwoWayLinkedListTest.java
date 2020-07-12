@@ -161,4 +161,16 @@ class TwoWayLinkedListTest {
         assertThat(list.getTail(), is("tail"));
         assertThat(list.get(1), is("tail"));
     }
+
+    @Test
+    void should_return_minis_1_when_call_index_of_to_empty_list() {
+        // given
+        TwoWayLinkedList<String> list = new TwoWayLinkedList<>();
+
+        // when
+        int index = list.indexOf("anyString");
+
+        // then
+        assertThat(index, is(-1));
+    }
 }

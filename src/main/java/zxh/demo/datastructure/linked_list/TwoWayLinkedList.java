@@ -76,14 +76,18 @@ public class TwoWayLinkedList<E> {
 
     public int indexOf(E element) {
         int index = -1;
+        if (isEmpty()) {
+            return index;
+        }
+
         Node<E> currentNode = head;
-        do {
+        for(;;) {
             index++;
-            if (currentNode.dataEquals(element)) {
+            if (index == size() || currentNode.dataEquals(element)) {
                 break;
             }
             currentNode = currentNode.next;
-        } while (nonNull(currentNode));
+        }
 
         if (index == size()) {
             return -1;
