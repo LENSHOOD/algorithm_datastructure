@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
  * @author zhangxuhai
  * @date 2020/7/11
 */
-public class TwoWayLinkedList<E> {
+public class TwoWayLinkedList<E> implements LinkedList<E> {
     private Node<E> head = null;
     private Node<E> tail = null;
 
@@ -33,6 +33,7 @@ public class TwoWayLinkedList<E> {
         }
     }
 
+    @Override
     public void addHead(E element) {
         if (isEmpty()) {
             tail = head = new Node<>(null, null, element);
@@ -44,6 +45,7 @@ public class TwoWayLinkedList<E> {
         head = newHead;
     }
 
+    @Override
     public void addTail(E element) {
         if (isEmpty()) {
             tail = head = new Node<>(null, null, element);
@@ -55,6 +57,7 @@ public class TwoWayLinkedList<E> {
         tail = newTail;
     }
 
+    @Override
     public void add(int index, E element) {
         if (index > size() || index < 0) {
             throw new IndexOutOfBoundsException();
@@ -74,6 +77,7 @@ public class TwoWayLinkedList<E> {
         originalNode.previous.next = new Node<>(originalNode.previous, originalNode, element);
     }
 
+    @Override
     public int indexOf(E element) {
         int index = -1;
         if (isEmpty()) {
@@ -96,6 +100,7 @@ public class TwoWayLinkedList<E> {
         return index;
     }
 
+    @Override
     public E getHead() {
         if (isEmpty()) {
             throw new UnsupportedOperationException();
@@ -104,6 +109,7 @@ public class TwoWayLinkedList<E> {
         return head.data;
     }
 
+    @Override
     public E getTail() {
         if (isEmpty()) {
             throw new UnsupportedOperationException();
@@ -112,6 +118,7 @@ public class TwoWayLinkedList<E> {
         return tail.data;
     }
 
+    @Override
     public E get(int index) {
         if (index >= size() || index < 0) {
             throw new IndexOutOfBoundsException();
@@ -129,6 +136,7 @@ public class TwoWayLinkedList<E> {
         return currentNode;
     }
 
+    @Override
     public void removeHead() {
         if (isEmpty()) {
             throw new UnsupportedOperationException();
@@ -144,6 +152,7 @@ public class TwoWayLinkedList<E> {
         head.previous = null;
     }
 
+    @Override
     public void removeTail() {
         if (isEmpty()) {
             throw new UnsupportedOperationException();
@@ -159,6 +168,7 @@ public class TwoWayLinkedList<E> {
         tail.next = null;
     }
 
+    @Override
     public void remove(int index) {
         if (index >= size() || index < 0) {
             throw new IndexOutOfBoundsException();
@@ -178,10 +188,12 @@ public class TwoWayLinkedList<E> {
         originalNode.previous.next = originalNode.next;
     }
 
+    @Override
     public boolean isEmpty() {
         return isNull(head) && isNull(tail);
     }
 
+    @Override
     public int size() {
         int size = 0;
         if (isEmpty()) {
