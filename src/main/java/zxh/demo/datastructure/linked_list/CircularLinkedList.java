@@ -2,12 +2,36 @@ package zxh.demo.datastructure.linked_list;
 
 import static java.util.Objects.isNull;
 
+import java.util.Iterator;
+
 /**
  * CircularLinkedList:
  * @author zhangxuhai
  * @date 2020/7/12
 */
-public class CircularLinkedList<E> extends AbstractLinkedList<E> {
+public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iterable<E> {
+    public class CLLIterator implements Iterator<E> {
+        private Node<E> next = tail;
+
+        @Override
+        public boolean hasNext() {
+            return true;
+        }
+
+        @Override
+        public E next() {
+            next = next.next;
+            return next.data;
+        }
+
+        @Override
+        public void remove() {
+            Node<E> tmp = next;
+            CircularLinkedList.this.remove(indexOf(next.data));
+            next = tmp.next;
+        }
+    }
+
     @Override
     public void addHead(E element) {
         if (isEmpty()) {
@@ -112,5 +136,10 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> {
         } while (!currentNode.equals(head));
 
         return size;
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new CLLIterator();
     }
 }
