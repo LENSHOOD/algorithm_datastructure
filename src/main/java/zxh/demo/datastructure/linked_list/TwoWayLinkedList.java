@@ -110,4 +110,19 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
 
         return size;
     }
+
+    @Override
+    public void reverse() {
+        Node<E> curr = tail;
+        while (nonNull(curr)) {
+            Node<E> container = curr.previous;
+            curr.previous = curr.next;
+            curr.next = container;
+            curr = container;
+        }
+
+        Node<E> tmpHead = head;
+        head = tail;
+        tail = tmpHead;
+    }
 }

@@ -29,4 +29,6 @@ public interface LinkedList<E> {
     public boolean isEmpty();
 
     public int size();
+
+    public void reverse();
 }

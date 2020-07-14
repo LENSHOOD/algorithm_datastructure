@@ -173,4 +173,25 @@ class CircularLinkedListTest {
         // then
         assertThat(index, is(-1));
     }
+
+    @Test
+    void should_reverse_linked_list() {
+        // given
+        CircularLinkedList<String> list = new CircularLinkedList<>();
+        list.addHead("first");
+        list.addTail("second");
+        list.addTail("third");
+        list.addTail("fourth");
+        list.addTail("fifth");
+
+        // when
+        list.reverse();
+
+        // then
+        assertThat(list.get(0), is("fifth"));
+        assertThat(list.get(1), is("fourth"));
+        assertThat(list.get(2), is("third"));
+        assertThat(list.get(3), is("second"));
+        assertThat(list.get(4), is("first"));
+    }
 }

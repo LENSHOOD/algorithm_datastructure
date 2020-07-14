@@ -139,6 +139,23 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
     }
 
     @Override
+    public void reverse() {
+        Node<E> pre = tail;
+        Node<E> curr = head;
+        int size = size();
+        for (int i = 0; i < size; i++) {
+            Node<E> container = curr.next;
+            curr.next = pre;
+            pre = curr;
+            curr = container;
+        }
+
+        Node<E> tmpHead = head;
+        head = tail;
+        tail = tmpHead;
+    }
+
+    @Override
     public Iterator<E> iterator() {
         return new CLLIterator();
     }
