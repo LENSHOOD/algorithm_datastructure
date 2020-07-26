@@ -16,20 +16,6 @@ public interface CollectionForSort<T extends Comparable<T>> {
     boolean compareAndSwap(int fromIndex, int toIndex);
 
     /**
-     * compare value
-     *
-     * @param v1 v1
-     * @param v2 v2
-     * @param <T> comparable type
-     * @return  v1 < v2 : -1;
-     *          v1 == v2 : 0;
-     *          v1 > v2 : 1
-     */
-    default int compare(T v1, T v2) {
-        return v1.compareTo(v2);
-    }
-
-    /**
      * move value
      *
      * @param startIndex index start
