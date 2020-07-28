@@ -39,4 +39,12 @@ public interface CollectionForSort<T extends Comparable<T>> {
      * @return value
      */
     T get(int index);
+
+    /**
+     * set value to index
+     *
+     * @param index index
+     * @param value value
+     */
+    void set(int index, T value);
 }

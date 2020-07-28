@@ -28,7 +28,7 @@ public class ArrayListForSort<T extends Comparable<T>> implements CollectionForS
     @Override
     public boolean move(int startIndex, int endIndex, int steps) {
         if (startIndex == endIndex) {
-            return compareAndSwap(startIndex - 1, endIndex);
+            return false;
         }
 
         T tmpToBeMoved = array[endIndex];
@@ -50,5 +50,10 @@ public class ArrayListForSort<T extends Comparable<T>> implements CollectionForS
     @Override
     public T get(int index) {
         return array[index];
+    }
+
+    @Override
+    public void set(int index, T value) {
+        array[index] = value;
     }
 }

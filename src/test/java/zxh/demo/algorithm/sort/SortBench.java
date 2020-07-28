@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  * @date 2020/7/27
 */
 public class SortBench {
-    private static final int MAX_SIZE = 100000;
+    private static final int MAX_SIZE = 10000;
     private static Random random = new Random();
 
     @Test
@@ -21,14 +21,11 @@ public class SortBench {
         Integer[] original = random.ints(MAX_SIZE).boxed().toArray(Integer[]::new);
         Supplier<ArrayListForSort<Integer>> collectionBuilder =
                 () -> new ArrayListForSort<>(Arrays.copyOf(original, original.length));
-        ArrayListForSort<Integer> first = collectionBuilder.get();
-        ArrayListForSort<Integer> second = collectionBuilder.get();
-        ArrayListForSort<Integer> third = collectionBuilder.get();
 
         // when
-        printTimeConsuming(SelectionSort.class, c -> new SelectionSort<>(c).sort(), third);
-        printTimeConsuming(InsertionSort.class, c -> new InsertionSort<>(c).sort(), second);
-        printTimeConsuming(BubbleSort.class, c -> new BubbleSort<>(c).sort(), first);
+        printTimeConsuming(SelectionSort.class, c -> new SelectionSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(InsertionSort.class, c -> new InsertionSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(BubbleSort.class, c -> new BubbleSort<>(c).sort(), collectionBuilder.get());
     }
 
     private <T extends Comparable<T>> void printTimeConsuming(
