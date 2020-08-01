@@ -21,6 +21,21 @@ class SelectionSortTest {
         new SelectionSort<>(sortCollection).sort();
 
         // then
-        Assertions.assertArrayEquals(original, expected);
+        Assertions.assertArrayEquals(sortCollection.toArray(new Integer[]{}), expected);
+    }
+
+    @Test
+    public void should_sort_linked_list() {
+        // given
+        Integer[] original = random.ints(random.nextInt(MAX_SIZE)).boxed().toArray(Integer[]::new);
+        Integer[] expected = Arrays.copyOf(original, original.length);
+        Arrays.sort(expected);
+        LinkedListForSort<Integer> sortCollection = new LinkedListForSort<>(original);
+
+        // when
+        new SelectionSort<>(sortCollection).sort();
+
+        // then
+        Assertions.assertArrayEquals(sortCollection.toArray(new Integer[]{}), expected);
     }
 }

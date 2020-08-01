@@ -35,7 +35,9 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
     @Override
     protected void addNode(int index, E element) {
         Node<E> originalNode = getNode(index);
-        originalNode.previous.next = new Node<>(originalNode.previous, originalNode, element);
+        Node<E> newNode = new Node<>(originalNode.previous, originalNode, element);
+        originalNode.previous.next = newNode;
+        originalNode.previous = newNode;
     }
 
     @Override
@@ -93,6 +95,7 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
     protected void removeNode(int index) {
         Node<E> originalNode = getNode(index);
         originalNode.previous.next = originalNode.next;
+        originalNode.next.previous = originalNode.previous;
     }
 
     @Override

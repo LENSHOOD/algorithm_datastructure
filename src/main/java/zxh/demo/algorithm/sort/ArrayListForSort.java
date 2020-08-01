@@ -59,6 +59,6 @@ public class ArrayListForSort<T extends Comparable<T>> implements CollectionForS
 
     @Override
     public T[] toArray(T[] array) {
-        return array;
+        return this.array;
     }
 }

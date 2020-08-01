@@ -3,6 +3,8 @@ package zxh.demo.datastructure.linked_list;
 import static java.util.Objects.isNull;
 
 import lombok.AllArgsConstructor;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 /**
  * AbstractLinkedList:
@@ -129,10 +131,25 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
         return getNode(index).data;
     }
 
+    @Override
+    public void set(int index, E element) {
+        if (index >= size() || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        getNode(index).data = element;
+    }
+
     protected abstract Node<E> getNode(int index);
 
     @Override
     public boolean isEmpty() {
         return isNull(head) && isNull(tail);
+    }
+
+    @Override
+    public E[] toArray(E[] array) {
+        Object[] objects = IntStream.range(0, size()).mapToObj(this::get).toArray(Object[]::new);
+        return (E[]) Arrays.copyOf(objects, objects.length, array.getClass());
     }
 }

@@ -6,29 +6,33 @@ package zxh.demo.datastructure.linked_list;
  * @date 2020/7/12
 */
 public interface LinkedList<E> {
-    public void addHead(E element);
+    void addHead(E element);
 
-    public void addTail(E element);
+    void addTail(E element);
 
-    public void add(int index, E element);
+    void add(int index, E element);
 
-    public int indexOf(E element);
+    int indexOf(E element);
 
-    public E getHead();
+    E getHead();
 
-    public E getTail();
+    E getTail();
 
-    public E get(int index);
+    E get(int index);
 
-    public void removeHead();
+    void set(int index, E element);
+    
+    void removeHead();
 
-    public void removeTail();
+    void removeTail();
 
-    public void remove(int index);
+    void remove(int index);
 
-    public boolean isEmpty();
+    boolean isEmpty();
 
-    public int size();
+    int size();
 
-    public void reverse();
+    void reverse();
+
+    E[] toArray(E[] array);
 }
