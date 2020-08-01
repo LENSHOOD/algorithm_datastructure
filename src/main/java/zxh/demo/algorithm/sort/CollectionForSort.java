@@ -47,4 +47,12 @@ public interface CollectionForSort<T extends Comparable<T>> {
      * @param value value
      */
     void set(int index, T value);
+
+    /**
+     * return array
+     *
+     * @param array the array into which the elements of the list are to be stored
+     * @return array
+     */
+    T[] toArray(T[] array);
 }

@@ -56,4 +56,9 @@ public class ArrayListForSort<T extends Comparable<T>> implements CollectionForS
     public void set(int index, T value) {
         array[index] = value;
     }
+
+    @Override
+    public T[] toArray(T[] array) {
+        return array;
+    }
 }
