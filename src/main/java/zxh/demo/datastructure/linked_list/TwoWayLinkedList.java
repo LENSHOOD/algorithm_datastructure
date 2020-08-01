@@ -10,6 +10,7 @@ import static java.util.Objects.nonNull;
 public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
     @Override
     public void addHead(E element) {
+        size++;
         if (isEmpty()) {
             tail = head = new Node<>(null, null, element);
             return;
@@ -22,6 +23,7 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
 
     @Override
     public void addTail(E element) {
+        size++;
         if (isEmpty()) {
             tail = head = new Node<>(null, null, element);
             return;
@@ -38,6 +40,7 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
         Node<E> newNode = new Node<>(originalNode.previous, originalNode, element);
         originalNode.previous.next = newNode;
         originalNode.previous = newNode;
+        size++;
     }
 
     @Override
@@ -65,6 +68,7 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
             throw new UnsupportedOperationException();
         }
 
+        size--;
         if (head == tail) {
             head = null;
             tail = null;
@@ -81,6 +85,7 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
             throw new UnsupportedOperationException();
         }
 
+        size--;
         if (head == tail) {
             head = null;
             tail = null;
@@ -96,22 +101,7 @@ public class TwoWayLinkedList<E> extends AbstractLinkedList<E> {
         Node<E> originalNode = getNode(index);
         originalNode.previous.next = originalNode.next;
         originalNode.next.previous = originalNode.previous;
-    }
-
-    @Override
-    public int size() {
-        int size = 0;
-        if (isEmpty()) {
-            return size;
-        }
-
-        Node<E> currentNode = head;
-        do {
-            size++;
-            currentNode = currentNode.next;
-        } while (nonNull(currentNode));
-
-        return size;
+        size--;
     }
 
     @Override

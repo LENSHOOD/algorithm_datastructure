@@ -34,6 +34,7 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
 
     @Override
     public void addHead(E element) {
+        size++;
         if (isEmpty()) {
             tail = head = new Node<>(null, element);
             head.next = tail;
@@ -46,6 +47,7 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
 
     @Override
     public void addTail(E element) {
+        size++;
         if (isEmpty()) {
             tail = head = new Node<>(null, element);
             head.next = tail;
@@ -61,6 +63,7 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
         Node<E> previousNode = getNode(index - 1);
         Node<E> originalNode = getNode(index);
         previousNode.next = new Node<>(originalNode, element);
+        size++;
     }
 
     @Override
@@ -83,6 +86,7 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
             throw new UnsupportedOperationException();
         }
 
+        size--;
         if (head == tail) {
             head = null;
             tail = null;
@@ -102,12 +106,14 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
         if (head == tail) {
             head = null;
             tail = null;
+            size--;
             return;
         }
 
         Node<E> nodeBeforeTail = getNode(size() - 2);
         nodeBeforeTail.next = head;
         tail = nodeBeforeTail;
+        size--;
     }
 
     @Override
@@ -115,27 +121,12 @@ public class CircularLinkedList<E> extends AbstractLinkedList<E> implements Iter
         Node<E> previousNode = getNode(index - 1);
         Node<E> originalNode = getNode(index);
         previousNode.next = originalNode.next;
+        size--;
     }
 
     @Override
     public boolean isEmpty() {
         return isNull(head) && isNull(tail);
-    }
-
-    @Override
-    public int size() {
-        int size = 0;
-        if (isEmpty()) {
-            return size;
-        }
-
-        Node<E> currentNode = head;
-        do {
-            size++;
-            currentNode = currentNode.next;
-        } while (!currentNode.equals(head));
-
-        return size;
     }
 
     @Override

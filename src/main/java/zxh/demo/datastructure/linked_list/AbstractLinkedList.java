@@ -38,6 +38,7 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
 
     protected Node<E> head = null;
     protected Node<E> tail = null;
+    protected int size = 0;
 
     @Override
     public void add(int index, E element) {
@@ -151,5 +152,10 @@ public abstract class AbstractLinkedList<E> implements LinkedList<E> {
     public E[] toArray(E[] array) {
         Object[] objects = IntStream.range(0, size()).mapToObj(this::get).toArray(Object[]::new);
         return (E[]) Arrays.copyOf(objects, objects.length, array.getClass());
+    }
+
+    @Override
+    public int size() {
+        return size;
     }
 }
