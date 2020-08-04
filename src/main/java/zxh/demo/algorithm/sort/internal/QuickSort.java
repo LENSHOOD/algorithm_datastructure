@@ -33,11 +33,11 @@ public class QuickSort<T extends Comparable<T>> implements Sortable {
         int i = 0;
         for (int j = 0; j < endIndex; j++) {
             if (collection.get(j).compareTo(pivot) < 0) {
-                collection.compareAndSwap(i, j);
+                collection.swap(i, j);
                 i++;
             }
         }
-        collection.compareAndSwap(i, endIndex);
+        collection.swap(i, endIndex);
 
         partitionAndSplit(collection, startIndex, i - 1);
         partitionAndSplit(collection, i + 1, endIndex);

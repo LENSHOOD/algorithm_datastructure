@@ -1,9 +1,7 @@
 package zxh.demo.algorithm.sort;
 
 import org.junit.jupiter.api.Test;
-import zxh.demo.algorithm.sort.internal.BubbleSort;
-import zxh.demo.algorithm.sort.internal.InsertionSort;
-import zxh.demo.algorithm.sort.internal.SelectionSort;
+import zxh.demo.algorithm.sort.internal.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -15,7 +13,7 @@ import java.util.function.Supplier;
  * @date 2020/7/27
 */
 public class SortBench {
-    private static final int MAX_SIZE = 1000;
+    private static final int MAX_SIZE = 100000;
     private static Random random = new Random();
 
     @Test
@@ -29,6 +27,8 @@ public class SortBench {
         printTimeConsuming(SelectionSort.class, c -> new SelectionSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(InsertionSort.class, c -> new InsertionSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(BubbleSort.class, c -> new BubbleSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(MergeSort.class, c -> new MergeSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(QuickSort.class, c -> new QuickSort<>(c).sort(), collectionBuilder.get());
     }
 
     @Test
@@ -42,6 +42,8 @@ public class SortBench {
         printTimeConsuming(SelectionSort.class, c -> new SelectionSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(InsertionSort.class, c -> new InsertionSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(BubbleSort.class, c -> new BubbleSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(MergeSort.class, c -> new MergeSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(QuickSort.class, c -> new QuickSort<>(c).sort(), collectionBuilder.get());
     }
 
     private <T extends Comparable<T>> void printTimeConsuming(
