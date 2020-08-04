@@ -29,6 +29,13 @@ public class LinkedListForSort<T extends Comparable<T>> implements CollectionFor
     }
 
     @Override
+    public void swap(int fromIndex, int toIndex) {
+        T tmp = elements.get(fromIndex);
+        elements.set(fromIndex, elements.get(toIndex));
+        elements.set(toIndex, tmp);
+    }
+
+    @Override
     public boolean move(int startIndex, int endIndex, int steps) {
         if (startIndex == endIndex) {
             return false;

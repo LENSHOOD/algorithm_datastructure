@@ -26,6 +26,13 @@ public class ArrayListForSort<T extends Comparable<T>> implements CollectionForS
     }
 
     @Override
+    public void swap(int fromIndex, int toIndex) {
+        T tmp = array[fromIndex];
+        array[fromIndex] = array[toIndex];
+        array[toIndex] = tmp;
+    }
+
+    @Override
     public boolean move(int startIndex, int endIndex, int steps) {
         if (startIndex == endIndex) {
             return false;

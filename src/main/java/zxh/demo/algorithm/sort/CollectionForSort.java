@@ -7,13 +7,21 @@ package zxh.demo.algorithm.sort;
 */
 public interface CollectionForSort<T extends Comparable<T>> {
     /**
-     * swap from and to index
+     * compare then swap from and to index
      *
      * @param fromIndex from index
      * @param toIndex to index
      * @return is swapped
      */
     boolean compareAndSwap(int fromIndex, int toIndex);
+
+    /**
+     * swap from and to index
+     *
+     * @param fromIndex from index
+     * @param toIndex to index
+     */
+    void swap(int fromIndex, int toIndex);
 
     /**
      * move value
