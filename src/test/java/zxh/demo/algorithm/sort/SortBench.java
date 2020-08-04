@@ -1,6 +1,9 @@
 package zxh.demo.algorithm.sort;
 
 import org.junit.jupiter.api.Test;
+import zxh.demo.algorithm.sort.internal.BubbleSort;
+import zxh.demo.algorithm.sort.internal.InsertionSort;
+import zxh.demo.algorithm.sort.internal.SelectionSort;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.Consumer;

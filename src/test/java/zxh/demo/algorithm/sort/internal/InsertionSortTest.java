@@ -1,12 +1,15 @@
-package zxh.demo.algorithm.sort;
+package zxh.demo.algorithm.sort.internal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import zxh.demo.algorithm.sort.ArrayListForSort;
+import zxh.demo.algorithm.sort.LinkedListForSort;
+import zxh.demo.algorithm.sort.internal.InsertionSort;
 import java.util.Arrays;
 import java.util.Random;
 
-class BubbleSortTest {
-    private static final int MAX_SIZE = 10;
+class InsertionSortTest {
+    private static final int MAX_SIZE = 1000;
     private static Random random = new Random();
 
     @Test
@@ -18,7 +21,7 @@ class BubbleSortTest {
         ArrayListForSort<Integer> sortCollection = new ArrayListForSort<>(original);
 
         // when
-        new BubbleSort<>(sortCollection).sort();
+        new InsertionSort<>(sortCollection).sort();
 
         // then
         Assertions.assertArrayEquals(sortCollection.toArray(new Integer[]{}), expected);
@@ -33,10 +36,9 @@ class BubbleSortTest {
         LinkedListForSort<Integer> sortCollection = new LinkedListForSort<>(original);
 
         // when
-        new BubbleSort<>(sortCollection).sort();
+        new InsertionSort<>(sortCollection).sort();
 
         // then
         Assertions.assertArrayEquals(sortCollection.toArray(new Integer[]{}), expected);
     }
-
 }

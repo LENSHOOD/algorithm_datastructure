@@ -1,4 +1,7 @@
-package zxh.demo.algorithm.sort;
+package zxh.demo.algorithm.sort.internal;
+
+import zxh.demo.algorithm.sort.CollectionForSort;
+import zxh.demo.algorithm.sort.Sortable;
 
 /**
  * SelectionSort:

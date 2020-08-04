@@ -1,11 +1,14 @@
-package zxh.demo.algorithm.sort;
+package zxh.demo.algorithm.sort.internal;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import zxh.demo.algorithm.sort.ArrayListForSort;
+import zxh.demo.algorithm.sort.LinkedListForSort;
+import zxh.demo.algorithm.sort.internal.SelectionSort;
 import java.util.Arrays;
 import java.util.Random;
 
-class InsertionSortTest {
+class SelectionSortTest {
     private static final int MAX_SIZE = 1000;
     private static Random random = new Random();
 
@@ -18,7 +21,7 @@ class InsertionSortTest {
         ArrayListForSort<Integer> sortCollection = new ArrayListForSort<>(original);
 
         // when
-        new InsertionSort<>(sortCollection).sort();
+        new SelectionSort<>(sortCollection).sort();
 
         // then
         Assertions.assertArrayEquals(sortCollection.toArray(new Integer[]{}), expected);
@@ -33,7 +36,7 @@ class InsertionSortTest {
         LinkedListForSort<Integer> sortCollection = new LinkedListForSort<>(original);
 
         // when
-        new InsertionSort<>(sortCollection).sort();
+        new SelectionSort<>(sortCollection).sort();
 
         // then
         Assertions.assertArrayEquals(sortCollection.toArray(new Integer[]{}), expected);
