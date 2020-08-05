@@ -30,8 +30,8 @@ public class QuickSort<T extends Comparable<T>> implements Sortable {
         }
 
         T pivot = collection.get(endIndex);
-        int i = 0;
-        for (int j = 0; j < endIndex; j++) {
+        int i = startIndex;
+        for (int j = startIndex; j < endIndex; j++) {
             if (collection.get(j).compareTo(pivot) < 0) {
                 collection.swap(i, j);
                 i++;
