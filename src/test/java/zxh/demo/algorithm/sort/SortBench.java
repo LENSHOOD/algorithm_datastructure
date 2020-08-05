@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * @date 2020/7/27
 */
 public class SortBench {
-    private static final int MAX_SIZE = 100000;
+    private static final int MAX_SIZE = 1000;
     private static Random random = new Random();
 
     @Test
