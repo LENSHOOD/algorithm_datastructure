@@ -27,10 +27,10 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
         SearchResult<E> result = search(element);
 
         // rearrange level
-        if (result.updates.length < nodeLevel) {
+        if (level < nodeLevel) {
             result.updates = Arrays.copyOf(result.updates, nodeLevel);
             result.ranks = Arrays.copyOf(result.ranks, nodeLevel);
-            for (int i = nodeLevel - 1; i <=  level; i++) {
+            for (int i = nodeLevel - 1; i >= level; i--) {
                 result.updates[i] = head;
                 result.ranks[i] = 0;
                 head.forwards[i].forward = null;
