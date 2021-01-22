@@ -5,7 +5,13 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import zxh.demo.algorithm.sort.CollectionForSort;
+import zxh.demo.algorithm.sort.Sortable;
 import zxh.demo.datastructure.sorted_list.SkipLinkedList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
+import java.util.function.Consumer;
 
 class SkipLinkedListTest {
     @Test
@@ -100,5 +106,36 @@ class SkipLinkedListTest {
         // then
         assertThat(array.length, is(2));
         assertFalse(list.contains("2-element"));
+    }
+
+    @Test
+    void bench_of_searching() {
+        SkipLinkedList<Integer> skipLinkedList = new SkipLinkedList<>();
+        TwoWayLinkedList<Integer> linkedList = new TwoWayLinkedList<>();
+
+        int bound = 100000;
+        Integer[] warehouse = new Integer[bound];
+        for (int i = 0; i < bound; i++) {
+            warehouse[i] = i;
+        }
+
+        Collections.shuffle(Arrays.asList(warehouse));
+
+        for (int i = 0; i < bound; i++) {
+            Integer curr = warehouse[i];
+            skipLinkedList.add(curr);
+            linkedList.addTail(curr);
+        }
+
+        int toBeFound = new Random().nextInt(bound);
+        long start = System.currentTimeMillis();
+        skipLinkedList.contains(toBeFound);
+        long end = System.currentTimeMillis();
+        System.out.println(skipLinkedList.getClass().getSimpleName() + " time consuming: " + (end - start));
+
+        start = System.currentTimeMillis();
+        linkedList.indexOf(toBeFound);
+        end = System.currentTimeMillis();
+        System.out.println(linkedList.getClass().getSimpleName() + " time consuming: " + (end - start));
     }
 }

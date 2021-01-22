@@ -59,6 +59,7 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
         size++;
     }
 
+    // TODO: head cannot be sorted, should deal with it separately
     private void addHead(E element) {
         Node<E> headNode = new Node<>(element, 1);
         head = headNode;
@@ -205,11 +206,11 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
      * Hence, when LEVEL_P = 0.5, the mathematical expectation of level is:
      *     1 / (1 - LEVEL_P) = 2
      */
-    private static final double LEVEL_P = 0.5;
+    private static final double LEVEL_P = 0.25;
     private static final Random RANDOM = new Random();
     private int randomLevel() {
         int initLevel = 1;
-        while (RANDOM.nextDouble() > LEVEL_P) {
+        while (RANDOM.nextDouble() < LEVEL_P) {
             initLevel++;
         }
         return initLevel;
