@@ -1,6 +1,5 @@
 package zxh.demo.datastructure.sorted_list;
 
-import zxh.demo.datastructure.linked_list.LinkedList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -11,18 +10,16 @@ import java.util.Random;
  * @date 2021/1/21
  */
 public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
-    private Node<E> head;
-    private Node<E> tail;
+    /**
+     * sentinel dummy head
+     */
+    private final Node<E> head = new Node<>(null);
+    private Node<E> tail = head;
     private int level = 1;
     private int size;
 
     @Override
     public void add(E element) {
-        if (isEmpty()) {
-            addHead(element);
-            return;
-        }
-
         int nodeLevel = randomLevel();
         SearchResult<E> result = search(element);
 
@@ -39,8 +36,8 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
             level = nodeLevel;
         }
 
-        Node<E> newNode = new Node<>(element, nodeLevel);
-        for (int i = 0; i < result.updates.length; i++) {
+        Node<E> newNode = new Node<>(element);
+        for (int i = 0; i < level; i++) {
             newNode.forwards[i].forward = result.updates[i].forwards[i].forward;
             result.updates[i].forwards[i].forward = newNode;
 
@@ -59,22 +56,11 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
         size++;
     }
 
-    // TODO: head cannot be sorted, should deal with it separately
-    private void addHead(E element) {
-        Node<E> headNode = new Node<>(element, 1);
-        head = headNode;
-        tail = headNode;
-        size++;
-    }
-
     @Override
     public boolean contains(E element) {
         SearchResult<E> result = search(element);
         Node<E> found = result.updates[0].forwards[0].forward;
-        if (found == null) {
-            found = result.updates[0];
-        }
-        return found.dataEqual(element);
+        return found != null && found.dataEqual(element);
     }
 
     @Override
@@ -85,20 +71,17 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
 
         SearchResult<E> result = search(element);
         Node<E> found = result.updates[0].forwards[0].forward;
-        if (found == null) {
-            found = result.updates[0];
-        }
-
-        if (!found.dataEqual(element)) {
+        if (found == null || !found.dataEqual(element)) {
             throw new IllegalStateException("No such element.");
         }
 
-        for (int i = 0; i < result.updates.length; i++) {
-            if (result.updates[i].forwards[i].forward.equals(found)) {
-                result.updates[i].forwards[i].forward = found.forwards[i].forward;
-                result.updates[i].forwards[i].span += found.forwards[i].span - 1;
+        for (int i = 0; i < level; i++) {
+            Level<E> currLevel = result.updates[i].forwards[i];
+            if (currLevel.forward.equals(found)) {
+                currLevel.forward = found.forwards[i].forward;
+                currLevel.span += found.forwards[i].span - 1;
             } else {
-                result.updates[i].forwards[i].span -= 1;
+                currLevel.span -= 1;
             }
         }
 
@@ -128,7 +111,8 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
     @Override
     public E[] toArray(E[] array) {
         Object[] elements = new Object[size];
-        Node<E> currNode = head;
+        // exclude dummy head
+        Node<E> currNode = head.forwards[0].forward;
         for (int i = 0; i < size; i++) {
             elements[i] = currNode.data;
             currNode = currNode.forwards[0].forward;
@@ -143,14 +127,12 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
 
     private static final int MAX_LEVEL = 64;
     private static class Node<E extends Comparable<E>> implements Comparable<E> {
-        private Level<E>[] forwards = new Level[MAX_LEVEL];
+        private final Level<E>[] forwards = new Level[MAX_LEVEL];
         private Node<E> backward;
-        private E data;
-        private int level;
+        private final E data;
 
-        public Node(E data, int level) {
+        public Node(E data) {
             this.data = data;
-            this.level = level;
             for (int i = 0; i < MAX_LEVEL; i++) {
                 forwards[i] = new Level<>();
             }
@@ -180,9 +162,18 @@ public class SkipLinkedList<E extends Comparable<E>> implements SortedList<E> {
         SearchResult<E> result = new SearchResult<>(new Node[level], new int[level]);
         Node<E> closest = head;
         for (int i = level - 1; i >= 0; i--) {
-            while (closest.forwards[i].forward != null
-                    && closest.forwards[i].forward.compareTo(toFind) < 0) {
-                closest = closest.forwards[i].forward;
+            while (true) {
+                Node<E> closestNext = closest.forwards[i].forward;
+                // when closestNext is null(end of the level)
+                // or bigger than toFind (the find range of the level can be sure)
+                // break the while loop and go to next level
+                if (closestNext == null || closestNext.compareTo(toFind) >= 0) {
+                    break;
+                }
+
+                closest = closestNext;
+
+                // rank contains whole numbers of node back to head
                 result.ranks[i] += closest.forwards[i].span;
             }
             result.updates[i] = closest;
