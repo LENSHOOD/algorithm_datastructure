@@ -19,24 +19,39 @@ public class Heap<E extends Comparable<E>> {
     void heapify() {
         // exclude all leaf
         for (int lastParent = (innerArr.length - 1) / 2; lastParent >= 0; lastParent--) {
-            heapifyChildHeap(lastParent);
+            heapifyChildHeap(lastParent, innerArr.length);
         }
     }
 
-    private void heapifyChildHeap(int startPos) {
-        int currPos = startPos;
+    public E[] sort() {
+        for (int i = innerArr.length-1; i >= 0 ; i--) {
+            swap(i, 0);
+            heapifyChildHeap(0, i);
+        }
+
+        // get sorted array
+        E[] result = toArray();
+
+        // re-heapify
+        heapify();
+
+        return result;
+    }
+
+    private void heapifyChildHeap(int startPosInclusive, int endPosExclusive) {
+        int currPos = startPosInclusive;
         while (true) {
             int maxPos = currPos;
             int leftChildIndex = currPos * 2 + 1;
             int rightChildIndex = currPos * 2 + 2;
 
             E currNode = innerArr[currPos];
-            if (leftChildIndex < innerArr.length
+            if (leftChildIndex < endPosExclusive
                     && currNode.compareTo(innerArr[leftChildIndex]) < 0) {
                 maxPos = leftChildIndex;
             }
 
-            if (rightChildIndex < innerArr.length
+            if (rightChildIndex < endPosExclusive
                     && innerArr[maxPos].compareTo(innerArr[rightChildIndex]) < 0) {
                 maxPos = rightChildIndex;
             }
