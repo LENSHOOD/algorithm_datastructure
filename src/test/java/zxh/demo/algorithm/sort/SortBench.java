@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 */
 public class SortBench {
     private static final int MAX_SIZE = 1000;
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     @Test
     public void should_sort_array() {
@@ -29,6 +29,7 @@ public class SortBench {
         printTimeConsuming(BubbleSort.class, c -> new BubbleSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(MergeSort.class, c -> new MergeSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(QuickSort.class, c -> new QuickSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(HeapSort.class, c -> new HeapSort<>(c, Integer.class).sort(), collectionBuilder.get());
     }
 
     @Test
@@ -44,6 +45,7 @@ public class SortBench {
         printTimeConsuming(BubbleSort.class, c -> new BubbleSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(MergeSort.class, c -> new MergeSort<>(c).sort(), collectionBuilder.get());
         printTimeConsuming(QuickSort.class, c -> new QuickSort<>(c).sort(), collectionBuilder.get());
+        printTimeConsuming(HeapSort.class, c -> new HeapSort<>(c, Integer.class).sort(), collectionBuilder.get());
     }
 
     private <T extends Comparable<T>> void printTimeConsuming(
