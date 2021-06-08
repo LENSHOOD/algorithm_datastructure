@@ -36,7 +36,7 @@ public class Graph<E> {
     }
 
     public Optional<LinkedList<E>> successors(E node) {
-        return Optional.of(table.get(node));
+        return Optional.ofNullable(table.get(node));
     }
 
     public List<E> bfs(E from, E to) {
@@ -51,7 +51,7 @@ public class Graph<E> {
         while (true) {
             LinkedList<E> successors = successors(curr).orElse(new TwoWayLinkedList<>());
             for (var i = 0; i < successors.size(); i++) {
-                var e = successors.getHead();
+                var e = successors.get(i);
                 if (accessed.contains(e)) {
                     continue;
                 }
@@ -62,7 +62,6 @@ public class Graph<E> {
                 }
                 accessed.add(e);
                 tmpQueue.addTail(e);
-                successors.removeHead();
             }
 
             if (tmpQueue.isEmpty()) {
@@ -85,5 +84,49 @@ public class Graph<E> {
         Collections.reverse(result);
 
         return result;
+    }
+
+    private boolean found = false;
+    public List<E> dfs(E from, E to) {
+        if (from.equals(to)) {
+            return List.of(from);
+        }
+
+        Set<E> accessed = new HashSet<>();
+        Map<E, E> roadMap = new HashMap<>();
+        dfs(from, to, roadMap, accessed);
+
+        if (!roadMap.containsKey(to)) {
+            return new ArrayList<>();
+        }
+
+        var result = new ArrayList<E>();
+        var pointer = to;
+        while (pointer != null) {
+            result.add(pointer);
+            pointer = roadMap.get(pointer);
+        }
+        Collections.reverse(result);
+
+        return result;
+    }
+
+    private void dfs(E node, E to, Map<E, E> roadMap, Set<E> accessed) {
+        if (accessed.contains(node)) {
+            return;
+        }
+
+        if (found || node.equals(to)) {
+            found = true;
+            return;
+        }
+
+        accessed.add(node);
+        LinkedList<E> successors = successors(node).orElse(new TwoWayLinkedList<>());
+        for (var i = 0; i < successors.size(); i++) {
+            var e = successors.get(i);
+            roadMap.put(e, node);
+            dfs(e, to, roadMap, accessed);
+        }
     }
 }

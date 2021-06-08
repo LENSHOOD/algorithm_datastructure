@@ -50,7 +50,7 @@ class GraphTest {
     }
 
     @Test
-    void should_get_shortest_road_by_bfs() {
+    void should_get_shortest_road() {
         // given
         Graph<Integer> graph = Graph.<Integer>builder()
                 .put(1, 2)
@@ -63,9 +63,45 @@ class GraphTest {
                 .build();
 
         // when
-        List<Integer> road = graph.bfs(1, 7);
+        List<Integer> bfsRoad = graph.bfs(1, 7);
+        List<Integer> dfsRoad = graph.dfs(1, 7);
 
         // then
-        assertThat(road, contains(1, 2, 4, 6, 7));
+        assertThat(bfsRoad, contains(1, 2, 4, 6, 7));
+        assertThat(dfsRoad, contains(1, 2, 4, 6, 7));
+    }
+
+    @Test
+    void should_get_self_when_same() {
+        // given
+        Graph<Integer> graph = Graph.<Integer>builder()
+                .put(1, 2)
+                .put(2, 1)
+                .build();
+
+        // when
+        List<Integer> bfsRoad = graph.bfs(1, 1);
+        List<Integer> dfsRoad = graph.dfs(1, 1);
+
+        // then
+        assertThat(bfsRoad, contains(1));
+        assertThat(dfsRoad, contains(1));
+    }
+
+    @Test
+    void should_get_empty_when_no_road() {
+        // given
+        Graph<Integer> graph = Graph.<Integer>builder()
+                .put(1, 2)
+                .put(3, 4)
+                .build();
+
+        // when
+        List<Integer> bfsRoad = graph.bfs(1, 4);
+        List<Integer> dfsRoad = graph.dfs(1, 4);
+
+        // then
+        assertThat(bfsRoad, empty());
+        assertThat(dfsRoad, empty());
     }
 }
