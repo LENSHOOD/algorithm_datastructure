@@ -49,6 +49,7 @@ public class Graph<E> {
         Map<E, E> roadMap = new HashMap<>();
         E curr = from;
         while (true) {
+            accessed.add(curr);
             LinkedList<E> successors = successors(curr).orElse(new TwoWayLinkedList<>());
             for (var i = 0; i < successors.size(); i++) {
                 var e = successors.get(i);
@@ -58,25 +59,27 @@ public class Graph<E> {
 
                 roadMap.put(e, curr);
                 if (e.equals(to)) {
-                    break;
+                    return getRoad(to, roadMap);
                 }
                 accessed.add(e);
                 tmpQueue.addTail(e);
             }
 
             if (tmpQueue.isEmpty()) {
-                break;
+                return getRoad(to, roadMap);
             }
             curr = tmpQueue.getHead();
             tmpQueue.removeHead();
         }
+    }
 
-        if (!roadMap.containsKey(to)) {
+    private List<E> getRoad(E end, Map<E, E> roadMap) {
+        if (!roadMap.containsKey(end)) {
             return new ArrayList<>();
         }
 
         var result = new ArrayList<E>();
-        var pointer = to;
+        var pointer = end;
         while (pointer != null) {
             result.add(pointer);
             pointer = roadMap.get(pointer);
@@ -86,7 +89,6 @@ public class Graph<E> {
         return result;
     }
 
-    private boolean found = false;
     public List<E> dfs(E from, E to) {
         if (from.equals(to)) {
             return List.of(from);
@@ -94,39 +96,34 @@ public class Graph<E> {
 
         Set<E> accessed = new HashSet<>();
         Map<E, E> roadMap = new HashMap<>();
-        dfs(from, to, roadMap, accessed);
+        LinkedList<E> tmpStack = new TwoWayLinkedList<>();
+        tmpStack.addHead(from);
 
-        if (!roadMap.containsKey(to)) {
-            return new ArrayList<>();
-        }
+        E curr;
+        while (true) {
+            if (tmpStack.isEmpty()) {
+                return getRoad(to, roadMap);
+            }
 
-        var result = new ArrayList<E>();
-        var pointer = to;
-        while (pointer != null) {
-            result.add(pointer);
-            pointer = roadMap.get(pointer);
-        }
-        Collections.reverse(result);
+            curr = tmpStack.getHead();
+            tmpStack.removeHead();
+            if (accessed.contains(curr)) {
+                continue;
+            }
 
-        return result;
-    }
+            if (curr.equals(to)) {
+                return getRoad(to, roadMap);
+            }
+            accessed.add(curr);
 
-    private void dfs(E node, E to, Map<E, E> roadMap, Set<E> accessed) {
-        if (accessed.contains(node)) {
-            return;
-        }
-
-        if (found || node.equals(to)) {
-            found = true;
-            return;
-        }
-
-        accessed.add(node);
-        LinkedList<E> successors = successors(node).orElse(new TwoWayLinkedList<>());
-        for (var i = 0; i < successors.size(); i++) {
-            var e = successors.get(i);
-            roadMap.put(e, node);
-            dfs(e, to, roadMap, accessed);
+            LinkedList<E> successors = successors(curr).orElse(new TwoWayLinkedList<>());
+            for (int i = successors.size() - 1; i >= 0; i--) {
+                var e = successors.get(i);
+                tmpStack.addHead(e);
+                if (!accessed.contains(e)) {
+                    roadMap.put(e, curr);
+                }
+            }
         }
     }
 }

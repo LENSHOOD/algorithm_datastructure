@@ -50,7 +50,7 @@ class GraphTest {
     }
 
     @Test
-    void should_get_shortest_road() {
+    void should_get_road_1() {
         // given
         Graph<Integer> graph = Graph.<Integer>builder()
                 .put(1, 2)
@@ -69,6 +69,41 @@ class GraphTest {
         // then
         assertThat(bfsRoad, contains(1, 2, 4, 6, 7));
         assertThat(dfsRoad, contains(1, 2, 4, 6, 7));
+    }
+
+    @Test
+    void should_get_road_2() {
+        // given
+        Graph<Integer> graph = Graph.<Integer>builder()
+                .put(0, 1)
+                .put(0, 3)
+                .put(1, 0)
+                .put(1, 2)
+                .put(1, 4)
+                .put(2, 1)
+                .put(2, 5)
+                .put(3, 0)
+                .put(3, 4)
+                .put(4, 1)
+                .put(4, 3)
+                .put(4, 5)
+                .put(4, 6)
+                .put(5, 2)
+                .put(5, 4)
+                .put(5, 7)
+                .put(6, 4)
+                .put(6, 7)
+                .put(7, 5)
+                .put(7, 6)
+                .build();
+
+        // when
+        List<Integer> bfsRoad = graph.bfs(0, 6);
+        List<Integer> dfsRoad = graph.dfs(0, 6);
+
+        // then
+        assertThat(bfsRoad, contains(0, 1, 4, 6));
+        assertThat(dfsRoad, contains(0, 1, 2, 5, 4, 6));
     }
 
     @Test
