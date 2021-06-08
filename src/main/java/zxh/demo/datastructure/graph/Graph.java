@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import zxh.demo.datastructure.linked_list.LinkedList;
 import zxh.demo.datastructure.linked_list.TwoWayLinkedList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Graph:
@@ -39,5 +37,53 @@ public class Graph<E> {
 
     public Optional<LinkedList<E>> successors(E node) {
         return Optional.of(table.get(node));
+    }
+
+    public List<E> bfs(E from, E to) {
+        if (from.equals(to)) {
+            return List.of(from);
+        }
+
+        LinkedList<E> tmpQueue = new TwoWayLinkedList<>();
+        Set<E> accessed = new HashSet<>();
+        Map<E, E> roadMap = new HashMap<>();
+        E curr = from;
+        while (true) {
+            LinkedList<E> successors = successors(curr).orElse(new TwoWayLinkedList<>());
+            for (var i = 0; i < successors.size(); i++) {
+                var e = successors.getHead();
+                if (accessed.contains(e)) {
+                    continue;
+                }
+
+                roadMap.put(e, curr);
+                if (e.equals(to)) {
+                    break;
+                }
+                accessed.add(e);
+                tmpQueue.addTail(e);
+                successors.removeHead();
+            }
+
+            if (tmpQueue.isEmpty()) {
+                break;
+            }
+            curr = tmpQueue.getHead();
+            tmpQueue.removeHead();
+        }
+
+        if (!roadMap.containsKey(to)) {
+            return new ArrayList<>();
+        }
+
+        var result = new ArrayList<E>();
+        var pointer = to;
+        while (pointer != null) {
+            result.add(pointer);
+            pointer = roadMap.get(pointer);
+        }
+        Collections.reverse(result);
+
+        return result;
     }
 }

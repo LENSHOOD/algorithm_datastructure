@@ -8,6 +8,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import zxh.demo.datastructure.linked_list.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 class GraphTest {
@@ -46,5 +47,25 @@ class GraphTest {
         Optional<LinkedList<Integer>> sOf5 = graph.successors(5);
         assertThat(sOf5.isPresent(), is(true));
         assertThat(sOf5.get().toArray(new Integer[]{}), arrayContaining(1, 4));
+    }
+
+    @Test
+    void should_get_shortest_road_by_bfs() {
+        // given
+        Graph<Integer> graph = Graph.<Integer>builder()
+                .put(1, 2)
+                .put(1, 3)
+                .put(2, 4)
+                .put(2, 5)
+                .put(4, 6)
+                .put(5, 6)
+                .put(6, 7)
+                .build();
+
+        // when
+        List<Integer> road = graph.bfs(1, 7);
+
+        // then
+        assertThat(road, contains(1, 2, 4, 6, 7));
     }
 }
