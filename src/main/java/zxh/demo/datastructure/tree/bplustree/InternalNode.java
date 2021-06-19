@@ -2,6 +2,7 @@ package zxh.demo.datastructure.tree.bplustree;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +37,32 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         return pairs.size() - 1;
     }
 
-    void add(K key, BptNode<K> child) {
-        // todo: binary search
-        for (int i = 1; i < size(); i++) {
-            if (pairs.get(i).getKey().compareTo(key) > 0) {
-                continue;
-            }
+    @Override
+    public void setParent(BptNode<K> parent) {
+        assert parent instanceof InternalNode;
+        this.parent = (InternalNode<K>) parent;
+    }
 
-            pairs.add(i, new INodePair(key, child));
+    void add(K key, BptNode<K> child) {
+        if (key == null) {
+            pairs.get(0).pointer = child;
+            return;
         }
+
+        if (size() == 0) {
+            pairs.add(new INodePair(key, child));
+            return;
+        }
+
+        // todo: binary search
+        for (var i = 1; i <= size(); i++) {
+            if (key.compareTo(pairs.get(i).getKey()) <= 0) {
+                pairs.add(i, new INodePair(key, child));
+                return;
+            }
+        }
+
+        pairs.add(new INodePair(key, child));
     }
 
     InternalNode<K> spilt(K key, BptNode<K> pointer) {
@@ -53,6 +71,8 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         InternalNode<K> n1 = new InternalNode<>(parent);
         pairs.removeAll(n0Pair);
         n1.pairs.addAll(pairs);
+        n1.pairs.get(0).pointer = pairs.get(0).pointer;
+        n1.pairs.get(1).pointer = null;
         pairs = n0Pair;
         return n1;
     }
@@ -67,7 +87,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     }
 
     BptNode<K> findChild(K key) {
-        for (int i = size() - 1; i > 0; i--) {
+        for (int i = size(); i > 0; i--) {
             if (key.compareTo(pairs.get(i).getKey()) >= 0) {
                 return pairs.get(i).pointer;
             }

@@ -38,6 +38,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
                     ((LeafNode<K, V>) curr).add(currKey, value);
                 } else {
                     ((InternalNode<K>) curr).add(currKey, currChild);
+                    root = curr;
                 }
 
                 break;
@@ -46,12 +47,20 @@ public class BPlusTree<K extends Comparable<K>, V> {
             if (isLeafNode(curr)) {
                 currChild = ((LeafNode<K, V>) curr).spilt(key, value);
                 currKey = ((LeafNode<K, V>) currChild).getFirst().getKey();
-                curr = ((LeafNode<K, V>) curr).getParent();
             } else {
-                currChild = ((InternalNode<K>) curr).spilt(key, currChild);
-                currKey = ((InternalNode<K>) curr).popFirst().getKey();
-                curr = ((InternalNode<K>) curr).getParent();
+                currChild = ((InternalNode<K>) curr).spilt(currKey, currChild);
+                currKey = ((InternalNode<K>) currChild).popFirst().getKey();
             }
+
+            if (curr.getParent() == null) {
+                InternalNode<K> newParent = new InternalNode<>(null);
+                // left pointer of new parent is curr
+                newParent.add(null, curr);
+                curr.setParent(newParent);
+                currChild.setParent(newParent);
+            }
+
+            curr = curr.getParent();
         }
     }
 

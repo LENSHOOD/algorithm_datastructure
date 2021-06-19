@@ -52,14 +52,14 @@ class BPlusTreeTest {
         // then level-2
         LeafNode<Integer, String> l21 = (LeafNode<Integer, String>) l11Pairs[0].getPointer();
         LeafNode<Integer, String>.LNodePair[] l21Pairs = l21.getPairs();
-        assertThat(l21Pairs.length, is(3));
-        assertThat(l21Pairs[1].getKey(), is(1));
-        assertThat(l21Pairs[2].getKey(), is(2));
+        assertThat(l21Pairs.length, is(2));
+        assertThat(l21Pairs[0].getKey(), is(1));
+        assertThat(l21Pairs[1].getKey(), is(2));
 
         LeafNode<Integer, String>.LNodePair[] l22Pairs = l21.getNext().getPairs();
-        assertThat(l22Pairs.length, is(3));
-        assertThat(l22Pairs[1].getKey(), is(3));
-        assertThat(l22Pairs[2].getKey(), is(4));
+        assertThat(l22Pairs.length, is(2));
+        assertThat(l22Pairs[0].getKey(), is(3));
+        assertThat(l22Pairs[1].getKey(), is(4));
 
         assertThat(l21.getNext().getNext().getNext().getNext(), is(l12Pairs[1].getPointer()));
     }

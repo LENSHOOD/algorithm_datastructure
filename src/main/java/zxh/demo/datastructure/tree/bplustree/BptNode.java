@@ -7,4 +7,8 @@ package zxh.demo.datastructure.tree.bplustree;
 */
 public interface BptNode<K extends Comparable<K>> {
     int size();
+
+    BptNode<K> getParent();
+
+    void setParent(BptNode<K> parent);
 }

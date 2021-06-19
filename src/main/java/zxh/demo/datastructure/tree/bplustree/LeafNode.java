@@ -2,10 +2,10 @@ package zxh.demo.datastructure.tree.bplustree;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -36,19 +36,27 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
         return pairs.size();
     }
 
+    @Override
+    public void setParent(BptNode<K> parent) {
+        assert parent instanceof InternalNode;
+        this.parent = (InternalNode<K>) parent;
+    }
+
     void add(K key, V value) {
         if (size() == 0) {
             pairs.add(new LNodePair(key, value));
+            return;
         }
 
         // todo: binary search
-        for (int i = 0; i < size(); i++) {
-            if (pairs.get(i).getKey().compareTo(key) > 0) {
-                continue;
+        for (var i = 0; i < size(); i++) {
+            if (key.compareTo(pairs.get(i).getKey()) <= 0) {
+                pairs.add(i, new LNodePair(key, value));
+                return;
             }
-
-            pairs.add(i, new LNodePair(key, value));
         }
+
+        pairs.add(new LNodePair(key, value));
     }
 
     LeafNode<K, V> spilt(K key, V value) {
