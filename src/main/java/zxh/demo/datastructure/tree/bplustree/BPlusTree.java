@@ -64,6 +64,35 @@ public class BPlusTree<K extends Comparable<K>, V> {
         }
     }
 
+    /**
+     * 1. find node(current) to be delete
+     * 2. if number of keys contained in node(N-keys) > N/2:
+     *     - find the key then delete it
+     *     - finish operation
+     * 3. else if N-keys == N/2,
+     *     at first, delete it from the node, then:
+     *     - when node is leaf:
+     *         a. if it's LEFT sibling has more than N/2 keys,
+     *            borrow the last key and put it to current node,
+     *            replace parent key to the last key.
+     *         b. if it's RIGHT sibling has more than N/2 keys,
+     *            borrow the first key and put it to current node,
+     *            replace parent key to the new first key of
+     *            right sibling.
+     *         c. if no siblings can borrow, first merge current
+     *            node to one of the siblings, then delete parent key.
+     *     - when node is internal:
+     *         a. if it's LEFT sibling has more than N/2 keys,
+     *            move the parent key to current node, then borrow
+     *            the left sibling's last key, to fill parent.
+     *         b. if it's RIGHT sibling has more than N/2 keys,
+     *            move the parent key to current node, then borrow
+     *            the right sibling's first key, to fill parent.
+     *         c. if no siblings can borrow, pull down the parent key
+     *            to the sibling, then merge current node to sibling to.
+     *     - goto 4
+     * 4. switch current node to the parent, goto 2
+     */
     public void remove(K key) {
 
     }
