@@ -9,7 +9,7 @@ import java.util.Optional;
 */
 public class BPlusTree<K extends Comparable<K>, V> {
     private BptNode<K> root;
-    private int degree;
+    private final int degree;
 
     public BPlusTree(int degree) {
         root = new LeafNode<>(null);
@@ -66,10 +66,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 
     /**
      * 1. find node(current) to be delete
-     * 2. if number of keys contained in node(N-keys) > N/2:
+     * 2. if number of keys contained in node(N-keys) > N/2 - 1:
      *     - find the key then delete it
      *     - finish operation
-     * 3. else if N-keys == N/2,
+     * 3. else if N-keys == N/2 - 1,
      *     at first, delete it from the node, then:
      *     - when node is leaf:
      *         a. if it's LEFT sibling has more than N/2 keys,
