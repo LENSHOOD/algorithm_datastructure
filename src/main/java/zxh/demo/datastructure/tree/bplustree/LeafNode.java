@@ -1,10 +1,14 @@
 package zxh.demo.datastructure.tree.bplustree;
 
+import static java.util.Objects.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +27,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
 
     private InternalNode<K> parent;
     private List<LNodePair> pairs;
+    private LeafNode<K, V> prev;
     private LeafNode<K, V> next;
 
     public LeafNode(InternalNode<K> parent) {
@@ -67,8 +72,61 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
         pairs = n0Pair;
 
         n1.next = next;
+        n1.prev = this;
         next = n1;
         return n1;
+    }
+
+    void remove(K key) {
+        pairs.removeIf(pair -> pair.getKey().equals(key));
+    }
+
+    Optional<LeafNode<K, V>> getLeftSibling() {
+        if (isNull(prev) || prev.parent.equals(parent)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(prev);
+    }
+
+    Optional<LeafNode<K, V>> getRightSibling() {
+        if (isNull(next) || next.parent.equals(parent)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(next);
+    }
+
+    K borrowLeft() {
+        LNodePair leftLast = requireNonNull(prev).getPairs()[pairs.size() - 1];
+        prev.remove(leftLast.key);
+        add(leftLast.key, leftLast.value);
+        return leftLast.key;
+    }
+
+    K borrowRight() {
+        LNodePair rightFirst = requireNonNull(next).getPairs()[0];
+        prev.remove(rightFirst.key);
+        add(rightFirst.key, rightFirst.value);
+        return next.getPairs()[0].key;
+    }
+
+    void mergeLeft() {
+        prev.next = next;
+        if (nonNull(next)) {
+            next.prev = prev;
+        }
+
+        prev.pairs.addAll(pairs);
+    }
+
+    void mergeRight() {
+        next.prev = prev;
+        if (nonNull(prev)) {
+            prev.next = next;
+        }
+
+        next.pairs.addAll(pairs);
     }
 
     LNodePair getFirst() {

@@ -11,4 +11,12 @@ public interface BptNode<K extends Comparable<K>> {
     BptNode<K> getParent();
 
     void setParent(BptNode<K> parent);
+
+    default boolean notFull(int degree) {
+        return size() < degree - 1;
+    }
+
+    default boolean beyondHalf(int degree) {
+        return size() > degree/2 - 1;
+    }
 }

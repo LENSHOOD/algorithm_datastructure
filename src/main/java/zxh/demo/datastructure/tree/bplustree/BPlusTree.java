@@ -1,5 +1,8 @@
 package zxh.demo.datastructure.tree.bplustree;
 
+import static java.util.Objects.*;
+
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,7 +36,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
         K currKey = key;
         BptNode<K> currChild = null;
         while (true) {
-            if (curr.size() < degree - 1) {
+            if (curr.notFull(degree)) {
                 if (isLeafNode(curr)) {
                     ((LeafNode<K, V>) curr).add(currKey, value);
                 } else {
@@ -74,11 +77,11 @@ public class BPlusTree<K extends Comparable<K>, V> {
      *     - when node is leaf:
      *         a. if it's LEFT sibling has more than N/2 keys,
      *            borrow the last key and put it to current node,
-     *            replace parent key to the last key.
+     *            replace parent key to the last key. finish operation.
      *         b. if it's RIGHT sibling has more than N/2 keys,
      *            borrow the first key and put it to current node,
      *            replace parent key to the new first key of
-     *            right sibling.
+     *            right sibling. finish operation.
      *         c. if no siblings can borrow, first merge current
      *            node to one of the siblings, then delete parent key.
      *     - when node is internal:
@@ -94,7 +97,50 @@ public class BPlusTree<K extends Comparable<K>, V> {
      * 4. switch current node to the parent, goto 2
      */
     public void remove(K key) {
+        BptNode<K> curr = findNode(key);
+        K currKey = key;
+        BptNode<K> currChild = null;
+        while (true) {
+            if (curr.beyondHalf(degree)) {
+                if (isLeafNode(curr)) {
+                    ((LeafNode<K, V>) curr).remove(currKey);
+                } else {
+                    ((InternalNode<K>) curr).remove(currKey);
+                    root = curr;
+                }
 
+                break;
+            }
+
+            if (isLeafNode(curr)) {
+                LeafNode<K, V> leafCurr = (LeafNode<K, V>) curr;
+                leafCurr.remove(currKey);
+
+                // left sibling
+                Optional<LeafNode<K, V>> leftSiblingOp = leafCurr.getLeftSibling();
+                if (leftSiblingOp.isPresent() && leftSiblingOp.get().beyondHalf(degree)) {
+                    K keyToBeReplaced = leafCurr.borrowLeft();
+                    leafCurr.getParent().replacePairKey(leafCurr, keyToBeReplaced);
+                    break;
+                }
+
+                // right sibling
+                Optional<LeafNode<K, V>> rightSiblingOp = leafCurr.getRightSibling();
+                if (rightSiblingOp.isPresent() && rightSiblingOp.get().beyondHalf(degree)) {
+                    K keyToBeReplaced = leafCurr.borrowRight();
+                    leafCurr.getParent().replacePairKey(leafCurr.getNext(), keyToBeReplaced);
+                    break;
+                }
+
+                leftSiblingOp.ifPresent(left -> leafCurr.mergeLeft());
+                rightSiblingOp.ifPresent(left -> leafCurr.mergeRight());
+
+                currKey = leafCurr.getParent().getByPointer(leafCurr);
+                curr = leafCurr.getParent();
+            } else {
+                // internal node
+            }
+        }
     }
 
     public Optional<V> get(K key) {

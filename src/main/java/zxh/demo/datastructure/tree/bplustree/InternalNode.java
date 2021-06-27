@@ -21,14 +21,14 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         private BptNode<K> pointer;
     }
 
-    private final INodePair HEAD = new INodePair(null, null);
+    private final INodePair head = new INodePair(null, null);
 
     private InternalNode<K> parent;
     private List<INodePair> pairs = new ArrayList<>();
 
     public InternalNode(InternalNode<K> parent) {
         this.parent = parent;
-        pairs.add(HEAD);
+        pairs.add(head);
     }
 
     @Override
@@ -62,6 +62,29 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         }
 
         pairs.add(new INodePair(key, child));
+    }
+
+    void remove(K key) {
+        pairs.removeIf(pair -> pair.getKey().equals(key));
+    }
+
+    K getByPointer(BptNode<K> pointer) {
+        for (int i = 0; i < size(); i++) {
+            if (pairs.get(i).pointer.equals(pointer)) {
+                return pairs.get(i).key;
+            }
+        }
+
+        // shouldn't goes here
+        throw new IllegalStateException();
+    }
+
+    void replacePairKey(BptNode<K> pointer, K newKey) {
+        for (int i = size(); i > 0; i--) {
+            if (pointer.equals(pairs.get(i).getPointer())) {
+                pairs.get(i).key = newKey;
+            }
+        }
     }
 
     InternalNode<K> spilt(K key, BptNode<K> pointer) {
