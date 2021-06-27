@@ -1,10 +1,14 @@
 package zxh.demo.datastructure.tree.bplustree;
 
+import static java.util.Objects.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -64,29 +68,6 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         pairs.add(new INodePair(key, child));
     }
 
-    void remove(K key) {
-        pairs.removeIf(pair -> pair.getKey().equals(key));
-    }
-
-    K getByPointer(BptNode<K> pointer) {
-        for (int i = 0; i < size(); i++) {
-            if (pairs.get(i).pointer.equals(pointer)) {
-                return pairs.get(i).key;
-            }
-        }
-
-        // shouldn't goes here
-        throw new IllegalStateException();
-    }
-
-    void replacePairKey(BptNode<K> pointer, K newKey) {
-        for (int i = size(); i > 0; i--) {
-            if (pointer.equals(pairs.get(i).getPointer())) {
-                pairs.get(i).key = newKey;
-            }
-        }
-    }
-
     InternalNode<K> spilt(K key, BptNode<K> pointer) {
         add(key, pointer);
         List<INodePair> n0Pair = pairs.stream().limit(size() / 2 + 1).collect(Collectors.toList());
@@ -99,17 +80,97 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         return n1;
     }
 
+    void remove(K key) {
+        pairs.removeIf(pair -> pair.getKey().equals(key));
+    }
+
+    K getByPointer(BptNode<K> pointer) {
+        for (var i = 1; i <= size(); i++) {
+            if (pairs.get(i).pointer.equals(pointer)) {
+                return pairs.get(i).key;
+            }
+        }
+
+        // shouldn't goes here
+        throw new IllegalStateException();
+    }
+
+    void replacePairKey(BptNode<K> pointer, K newKey) {
+        for (var i = 1; i <= size(); i++) {
+            if (pointer.equals(pairs.get(i).getPointer())) {
+                pairs.get(i).key = newKey;
+            }
+        }
+    }
+
+    Optional<InternalNode<K>> getLeftSibling() {
+        if (isNull(parent)) {
+            return Optional.empty();
+        }
+
+        for (var i = 1; i <= parent.size(); i++) {
+            if (this.equals(parent.pairs.get(i).getPointer())) {
+                if (i == 1) {
+                    return Optional.empty();
+                }
+
+                return Optional.of((InternalNode<K>) pairs.get(i - 1).pointer);
+            }
+        }
+
+        // shouldn't goes here
+        throw new IllegalStateException();
+    }
+
+    Optional<InternalNode<K>> getRightSibling() {
+        if (isNull(parent)) {
+            return Optional.empty();
+        }
+
+        for (var i = 1; i <= parent.size(); i++) {
+            if (this.equals(parent.pairs.get(i).getPointer())) {
+                if (i == parent.size()) {
+                    return Optional.empty();
+                }
+
+                return Optional.of((InternalNode<K>) pairs.get(i + 1).pointer);
+            }
+        }
+
+        // shouldn't goes here
+        throw new IllegalStateException();
+    }
+
+    void mergeRight(K key, InternalNode<K> right) {
+        right.pairs.get(0).key = key;
+        pairs.addAll(right.pairs);
+    }
+
+    void mergeLeft(InternalNode<K> left, K key) {
+        pairs.get(0).key = key;
+        left.pairs.addAll(pairs);
+        pairs = left.pairs;
+    }
+
+    BptNode<K> getLeftPointer() {
+        return pairs.get(0).pointer;
+    }
+
     INodePair popFirst() {
         return pairs.remove(1);
     }
 
+    INodePair popLast() {
+        return pairs.remove(size());
+    }
+
     INodePair[] getPairs() {
         //noinspection unchecked
-        return pairs.toArray((INodePair[]) Array.newInstance(INodePair.class, size()));
+        return pairs.toArray((INodePair[]) Array.newInstance(INodePair.class, pairs.size()));
     }
 
     BptNode<K> findChild(K key) {
-        for (int i = size(); i > 0; i--) {
+        for (var i = 1; i <= size(); i++) {
             if (key.compareTo(pairs.get(i).getKey()) >= 0) {
                 return pairs.get(i).pointer;
             }

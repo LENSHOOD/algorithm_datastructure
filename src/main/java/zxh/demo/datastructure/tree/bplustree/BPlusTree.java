@@ -98,17 +98,19 @@ public class BPlusTree<K extends Comparable<K>, V> {
      */
     public void remove(K key) {
         BptNode<K> curr = findNode(key);
+        BptNode<K> prev = null;
         K currKey = key;
-        BptNode<K> currChild = null;
         while (true) {
-            if (curr.beyondHalf(degree)) {
+            if (curr.beyondHalf(degree) || curr == root) {
                 if (isLeafNode(curr)) {
                     ((LeafNode<K, V>) curr).remove(currKey);
                 } else {
                     ((InternalNode<K>) curr).remove(currKey);
-                    root = curr;
                 }
 
+                if (curr.size() == 0) {
+                    root = prev;
+                }
                 break;
             }
 
@@ -132,13 +134,63 @@ public class BPlusTree<K extends Comparable<K>, V> {
                     break;
                 }
 
-                leftSiblingOp.ifPresent(left -> leafCurr.mergeLeft());
-                rightSiblingOp.ifPresent(left -> leafCurr.mergeRight());
+                // merge
+                if (leftSiblingOp.isPresent()) {
+                    leafCurr.mergeLeft();
+                    prev = leftSiblingOp.get();
+                } else if (rightSiblingOp.isPresent()) {
+                    leafCurr.mergeRight();
+                    prev = rightSiblingOp.get();
+                } else {
+                    // shouldn't goes here
+                    throw new IllegalStateException();
+                }
 
                 currKey = leafCurr.getParent().getByPointer(leafCurr);
                 curr = leafCurr.getParent();
             } else {
-                // internal node
+                InternalNode<K> internalCurr = (InternalNode<K>) curr;
+                internalCurr.remove(currKey);
+
+                // left sibling
+                K parentKey = null;
+                Optional<InternalNode<K>> leftSiblingOp = internalCurr.getLeftSibling();
+                if (leftSiblingOp.isPresent() && leftSiblingOp.get().beyondHalf(degree)) {
+                    InternalNode<K>.INodePair leftLast = leftSiblingOp.get().popLast();
+                    parentKey = internalCurr.getParent().getByPointer(internalCurr);
+                    internalCurr.add(parentKey, internalCurr.getLeftPointer());
+                    internalCurr.add(null, leftLast.getPointer());
+                    internalCurr.getParent().replacePairKey(internalCurr, leftLast.getKey());
+                    break;
+                }
+
+                // right sibling
+                Optional<InternalNode<K>> rightSiblingOp = internalCurr.getRightSibling();
+                if (rightSiblingOp.isPresent() && rightSiblingOp.get().beyondHalf(degree)) {
+                    InternalNode<K>.INodePair rightFirst = rightSiblingOp.get().popFirst();
+                    parentKey = internalCurr.getParent().getByPointer(rightSiblingOp.get());
+                    internalCurr.add(parentKey, rightSiblingOp.get().getLeftPointer());
+                    rightSiblingOp.get().add(null, rightFirst.getPointer());
+                    internalCurr.getParent().replacePairKey(rightSiblingOp.get(), rightFirst.getKey());
+                    break;
+                }
+
+                // merge
+                if (leftSiblingOp.isPresent()) {
+                    parentKey = internalCurr.getParent().getByPointer(internalCurr);
+                    leftSiblingOp.get().mergeRight(parentKey, internalCurr);
+                    prev = leftSiblingOp.get();
+                } else if (rightSiblingOp.isPresent()) {
+                    parentKey = internalCurr.getParent().getByPointer(rightSiblingOp.get());
+                    rightSiblingOp.get().mergeLeft(internalCurr, parentKey);
+                    prev = rightSiblingOp.get();
+                } else {
+                    // shouldn't goes here
+                    throw new IllegalStateException();
+                }
+
+                currKey = parentKey;
+                curr = internalCurr.getParent();
             }
         }
     }
