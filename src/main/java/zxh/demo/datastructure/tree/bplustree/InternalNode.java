@@ -81,11 +81,22 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     }
 
     void remove(K key) {
-        pairs.removeIf(pair -> pair.getKey().equals(key));
+        if (isNull(key)) {
+            if (size() == 0) {
+                // shouldn't goes here
+                throw new IllegalStateException();
+            }
+
+            pairs.remove(0);
+            pairs.get(0).key = null;
+            return;
+        }
+
+        pairs.removeIf(pair -> key.equals(pair.getKey()));
     }
 
     K getByPointer(BptNode<K> pointer) {
-        for (var i = 1; i <= size(); i++) {
+        for (var i = 0; i <= size(); i++) {
             if (pairs.get(i).pointer.equals(pointer)) {
                 return pairs.get(i).key;
             }
@@ -108,9 +119,9 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
             return Optional.empty();
         }
 
-        for (var i = 1; i <= parent.size(); i++) {
+        for (var i = 0; i <= parent.size(); i++) {
             if (this.equals(parent.pairs.get(i).getPointer())) {
-                if (i == 1) {
+                if (i == 0) {
                     return Optional.empty();
                 }
 
@@ -127,13 +138,13 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
             return Optional.empty();
         }
 
-        for (var i = 1; i <= parent.size(); i++) {
+        for (var i = 0; i <= parent.size(); i++) {
             if (this.equals(parent.pairs.get(i).getPointer())) {
                 if (i == parent.size()) {
                     return Optional.empty();
                 }
 
-                return Optional.of((InternalNode<K>) pairs.get(i + 1).pointer);
+                return Optional.of((InternalNode<K>) parent.pairs.get(i + 1).pointer);
             }
         }
 
@@ -170,7 +181,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     }
 
     BptNode<K> findChild(K key) {
-        for (var i = 1; i <= size(); i++) {
+        for (int i = size(); i > 0; i--) {
             if (key.compareTo(pairs.get(i).getKey()) >= 0) {
                 return pairs.get(i).pointer;
             }

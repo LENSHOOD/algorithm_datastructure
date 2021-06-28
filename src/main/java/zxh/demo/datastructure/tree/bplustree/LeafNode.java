@@ -82,7 +82,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     }
 
     Optional<LeafNode<K, V>> getLeftSibling() {
-        if (isNull(prev) || prev.parent.equals(parent)) {
+        if (isNull(prev) || !prev.parent.equals(parent)) {
             return Optional.empty();
         }
 
@@ -90,7 +90,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     }
 
     Optional<LeafNode<K, V>> getRightSibling() {
-        if (isNull(next) || next.parent.equals(parent)) {
+        if (isNull(next) || !next.parent.equals(parent)) {
             return Optional.empty();
         }
 
@@ -98,7 +98,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     }
 
     K borrowLeft() {
-        LNodePair leftLast = requireNonNull(prev).getPairs()[pairs.size() - 1];
+        LNodePair leftLast = requireNonNull(prev).getPairs()[prev.size() - 1];
         prev.remove(leftLast.key);
         add(leftLast.key, leftLast.value);
         return leftLast.key;
@@ -106,9 +106,9 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
 
     K borrowRight() {
         LNodePair rightFirst = requireNonNull(next).getPairs()[0];
-        prev.remove(rightFirst.key);
+        next.remove(rightFirst.key);
         add(rightFirst.key, rightFirst.value);
-        return next.getPairs()[0].key;
+        return rightFirst.key;
     }
 
     void mergeLeft() {

@@ -4,6 +4,7 @@ import static java.util.Objects.*;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * BPlusTree:
@@ -130,7 +131,8 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 Optional<LeafNode<K, V>> rightSiblingOp = leafCurr.getRightSibling();
                 if (rightSiblingOp.isPresent() && rightSiblingOp.get().beyondHalf(degree)) {
                     K keyToBeReplaced = leafCurr.borrowRight();
-                    leafCurr.getParent().replacePairKey(leafCurr.getNext(), keyToBeReplaced);
+                    leafCurr.getParent().replacePairKey(leafCurr, keyToBeReplaced);
+                    leafCurr.getParent().replacePairKey(leafCurr.getNext(), rightSiblingOp.get().getFirst().getKey());
                     break;
                 }
 
@@ -153,7 +155,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 internalCurr.remove(currKey);
 
                 // left sibling
-                K parentKey = null;
+                K parentKey;
                 Optional<InternalNode<K>> leftSiblingOp = internalCurr.getLeftSibling();
                 if (leftSiblingOp.isPresent() && leftSiblingOp.get().beyondHalf(degree)) {
                     InternalNode<K>.INodePair leftLast = leftSiblingOp.get().popLast();
