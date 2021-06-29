@@ -270,9 +270,9 @@ class BPlusTreeTest {
         //
         //               5
         //        /              \
-        //       2               8|10
+        //       2               7|9
         //    /    \       /      |       \
-        //   1  ->  2 -> 5|6|7 -> 8|9 -> 10|11
+        //   1  ->  2 -> 5|6  -> 7|8 -> 9|10|11
         //
 
         // when
@@ -280,12 +280,15 @@ class BPlusTreeTest {
 
         // then
         //
-        //               8
-        //        /              \
-        //       5                10
-        //    /      \         /       \
-        //   1  ->  5|6|7 -> 8|9 -> 10|11
+        //               7
+        //        /             \
+        //       5               9
+        //    /     \         /     \
+        //   1  ->  5|6 -> 7|8 ->  9|10|11
         //
+        root = (InternalNode<Integer>) tree.getRoot();
+        assertThat(root.getPairs()[1].getKey(), is(7));
+
         internal0pair = internal0.getPairs();
         assertThat(internal0pair[1].getKey(), is(5));
 
@@ -294,23 +297,23 @@ class BPlusTreeTest {
         assertThat(leaf0.getPairs()[0].getKey(), is(1));
 
         leaf1 = leaf0.getNext();
-        assertThat(leaf1.getPairs().length, is(3));
+        assertThat(leaf1.getPairs().length, is(2));
         assertThat(leaf1.getPairs()[0].getKey(), is(5));
         assertThat(leaf1.getPairs()[1].getKey(), is(6));
-        assertThat(leaf1.getPairs()[2].getKey(), is(7));
 
         internal1pair = internal1.getPairs();
-        assertThat(internal1pair[1].getKey(), is(10));
+        assertThat(internal1pair[1].getKey(), is(9));
 
         leaf11 = (LeafNode<Integer, String>) internal1pair[0].getPointer();
         assertThat(leaf11.getPairs().length, is(2));
-        assertThat(leaf11.getPairs()[0].getKey(), is(8));
-        assertThat(leaf11.getPairs()[1].getKey(), is(9));
+        assertThat(leaf11.getPairs()[0].getKey(), is(7));
+        assertThat(leaf11.getPairs()[1].getKey(), is(8));
 
         leaf12 = leaf11.getNext();
-        assertThat(leaf12.getPairs().length, is(2));
-        assertThat(leaf12.getPairs()[0].getKey(), is(10));
-        assertThat(leaf12.getPairs()[1].getKey(), is(11));
+        assertThat(leaf12.getPairs().length, is(3));
+        assertThat(leaf12.getPairs()[0].getKey(), is(9));
+        assertThat(leaf12.getPairs()[1].getKey(), is(10));
+        assertThat(leaf12.getPairs()[2].getKey(), is(11));
 
         // when
         tree.remove(5);

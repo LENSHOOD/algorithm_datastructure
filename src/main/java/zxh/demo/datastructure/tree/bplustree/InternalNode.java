@@ -189,4 +189,8 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
 
         return pairs.get(0).pointer;
     }
+
+    boolean hasChild(BptNode<K> node) {
+        return pairs.stream().anyMatch(pair -> pair.pointer == node);
+    }
 }

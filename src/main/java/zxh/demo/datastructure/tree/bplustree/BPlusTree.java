@@ -38,7 +38,9 @@ public class BPlusTree<K extends Comparable<K>, V> {
                     ((LeafNode<K, V>) curr).add(currKey, value);
                 } else {
                     ((InternalNode<K>) curr).add(currKey, currChild);
-                    root = curr;
+                    if (root != curr && ((InternalNode<K>) curr).hasChild(root)) {
+                        root = curr;
+                    }
                 }
 
                 break;
