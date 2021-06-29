@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -143,5 +144,13 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     LNodePair[] getPairs() {
         //noinspection unchecked
         return pairs.toArray((LNodePair[]) Array.newInstance(LNodePair.class, size()));
+    }
+
+    @Override
+    public String toString() {
+        return pairs.stream()
+                .filter(pair -> nonNull(pair.getKey()))
+                .map(pair -> String.valueOf(pair.getKey()))
+                .collect(Collectors.joining("|"));
     }
 }

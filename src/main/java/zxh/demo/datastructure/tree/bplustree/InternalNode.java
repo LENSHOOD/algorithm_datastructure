@@ -193,4 +193,12 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     boolean hasChild(BptNode<K> node) {
         return pairs.stream().anyMatch(pair -> pair.pointer == node);
     }
+
+    @Override
+    public String toString() {
+        return pairs.stream()
+                .filter(pair -> nonNull(pair.getKey()))
+                .map(pair -> String.valueOf(pair.getKey()))
+                .collect(Collectors.joining("|"));
+    }
 }

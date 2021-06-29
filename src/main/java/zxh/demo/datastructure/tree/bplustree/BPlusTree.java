@@ -1,6 +1,9 @@
 package zxh.demo.datastructure.tree.bplustree;
 
-import java.util.Optional;
+import static java.util.Objects.*;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * BPlusTree:
@@ -226,4 +229,76 @@ public class BPlusTree<K extends Comparable<K>, V> {
         return node instanceof InternalNode;
     }
 
+    public void print() {
+        List<Integer> levelCounts = new ArrayList<>();
+        getLevelNodeNums(root, 0, levelCounts);
+        // add root node count
+        levelCounts.add(0, 1);
+
+        List<List<String>> levels = new ArrayList<>();
+        int h = 1;
+        Deque<BptNode<K>> queue = new ArrayDeque<>();
+        BptNode<K> curr = root;
+        while (nonNull(curr)){
+            if (levelCounts.get(h-1) != 0){
+                Integer count = levelCounts.get(h-1);
+                levelCounts.set(h-1, --count);
+            }
+
+            if (isLeafNode(curr)) {
+                LeafNode<K, V> leafCurr = (LeafNode<K, V>) curr;
+                List<String> currLevel;
+                if (levels.size() < h) {
+                    currLevel = new ArrayList<>();
+                    levels.add(currLevel);
+                } else {
+                    currLevel = levels.get(h-1);
+                }
+                currLevel.add(leafCurr.toString());
+            } else {
+                InternalNode<K> internalCurr = (InternalNode<K>) curr;
+                List<String> currLevel;
+                if (levels.size() < h) {
+                    currLevel = new ArrayList<>();
+                    levels.add(currLevel);
+                } else {
+                    currLevel = levels.get(h-1);
+                }
+
+                currLevel.add(internalCurr.toString());
+                Stream.of(internalCurr.getPairs()).forEach(pair -> queue.offer(pair.getPointer()));
+            }
+
+            curr = queue.poll();
+            if (levelCounts.get(h-1) == 0) {
+                h++;
+            }
+        }
+
+        levels.forEach(inner -> {
+            inner.forEach(ns -> System.out.print(ns + " "));
+            System.out.println();
+        });
+    }
+
+    private void getLevelNodeNums(BptNode<K> curr, int height, List<Integer> levels) {
+        height++;
+        if (isLeafNode(curr)) {
+            if (levels.size() < height) {
+                int originalSize = levels.size();
+                for (int i = 0; i < height - originalSize - 1; i++) {
+                    levels.add(0);
+                }
+            }
+
+            return;
+        }
+
+        InternalNode<K> iCurr = (InternalNode<K>) curr;
+        for (InternalNode<K>.INodePair pair : iCurr.getPairs()) {
+            getLevelNodeNums(pair.getPointer(), height, levels);
+            Integer count = levels.get(height - 1);
+            levels.set(height-1, ++count);
+        }
+    }
 }
