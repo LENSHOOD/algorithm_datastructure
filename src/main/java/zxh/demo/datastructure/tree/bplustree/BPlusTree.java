@@ -1,10 +1,6 @@
 package zxh.demo.datastructure.tree.bplustree;
 
-import static java.util.Objects.*;
-
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * BPlusTree:
@@ -138,10 +134,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
 
                 // merge
                 if (leftSiblingOp.isPresent()) {
-                    leafCurr.mergeLeft();
+                    leafCurr.mergeToLeft();
                     prev = leftSiblingOp.get();
                 } else if (rightSiblingOp.isPresent()) {
-                    leafCurr.mergeRight();
+                    leafCurr.mergeToRight();
                     prev = rightSiblingOp.get();
                 } else {
                     // shouldn't goes here

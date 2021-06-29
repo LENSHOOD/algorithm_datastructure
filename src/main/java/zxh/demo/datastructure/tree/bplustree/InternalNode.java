@@ -75,7 +75,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         pairs.removeAll(n0Pair);
         n1.pairs.addAll(pairs);
         n1.pairs.get(0).pointer = pairs.get(0).pointer;
-        n1.pairs.get(1).pointer = null;
+        n1.pairs.forEach(pair -> pair.pointer.setParent(n1));
         pairs = n0Pair;
         return n1;
     }
@@ -125,7 +125,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
                     return Optional.empty();
                 }
 
-                return Optional.of((InternalNode<K>) pairs.get(i - 1).pointer);
+                return Optional.of((InternalNode<K>) parent.pairs.get(i - 1).pointer);
             }
         }
 

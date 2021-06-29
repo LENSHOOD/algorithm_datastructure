@@ -73,6 +73,9 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
 
         n1.next = next;
         n1.prev = this;
+        if (nonNull(next)) {
+            next.prev = n1;
+        }
         next = n1;
         return n1;
     }
@@ -111,7 +114,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
         return rightFirst.key;
     }
 
-    void mergeLeft() {
+    void mergeToLeft() {
         prev.next = next;
         if (nonNull(next)) {
             next.prev = prev;
@@ -120,7 +123,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
         prev.pairs.addAll(pairs);
     }
 
-    void mergeRight() {
+    void mergeToRight() {
         next.prev = prev;
         if (nonNull(prev)) {
             prev.next = next;
