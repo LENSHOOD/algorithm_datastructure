@@ -42,6 +42,11 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
 
     @Override
     public void setParent(BptNode<K> parent) {
+        if (isNull(parent)) {
+            this.parent = null;
+            return;
+        }
+
         assert parent instanceof InternalNode;
         this.parent = (InternalNode<K>) parent;
     }
@@ -155,12 +160,14 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     void mergeRight(K key, InternalNode<K> right) {
         right.pairs.get(0).key = key;
         pairs.addAll(right.pairs);
+        pairs.forEach(pair -> pair.pointer.setParent(this));
     }
 
     void mergeLeft(InternalNode<K> left, K key) {
         pairs.get(0).key = key;
         left.pairs.addAll(pairs);
         pairs = left.pairs;
+        pairs.forEach(pair -> pair.pointer.setParent(this));
     }
 
     BptNode<K> getLeftPointer() {

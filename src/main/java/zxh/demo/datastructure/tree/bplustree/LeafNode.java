@@ -43,8 +43,17 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
 
     @Override
     public void setParent(BptNode<K> parent) {
+        if (isNull(parent)) {
+            this.parent = null;
+            return;
+        }
+
         assert parent instanceof InternalNode;
         this.parent = (InternalNode<K>) parent;
+    }
+
+    public boolean contains(K key) {
+        return pairs.stream().anyMatch(pair -> pair.key.equals(key));
     }
 
     void add(K key, V value) {
