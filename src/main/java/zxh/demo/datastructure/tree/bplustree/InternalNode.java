@@ -74,15 +74,22 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     }
 
     InternalNode<K> spilt(K key, BptNode<K> pointer) {
+        InternalNode<K> rightNode = new InternalNode<>(parent);
+
+        // spilt key-pairs between two node
         add(key, pointer);
-        List<INodePair> n0Pair = pairs.stream().limit(size() / 2 + 1).collect(Collectors.toList());
-        InternalNode<K> n1 = new InternalNode<>(parent);
-        pairs.removeAll(n0Pair);
-        n1.pairs.addAll(pairs);
-        n1.pairs.get(0).pointer = pairs.get(0).pointer;
-        n1.pairs.forEach(pair -> pair.pointer.setParent(n1));
-        pairs = n0Pair;
-        return n1;
+        List<INodePair> leftPairs = pairs.stream().limit(size() / 2 + 1).collect(Collectors.toList());
+        pairs.removeAll(leftPairs);
+        rightNode.pairs.addAll(pairs);
+
+        // special case of far left key-pair
+        rightNode.pairs.get(0).pointer = pairs.get(0).pointer;
+
+        // assign new parent to right children
+        rightNode.pairs.forEach(pair -> pair.pointer.setParent(rightNode));
+        pairs = leftPairs;
+
+        return rightNode;
     }
 
     void remove(K key) {

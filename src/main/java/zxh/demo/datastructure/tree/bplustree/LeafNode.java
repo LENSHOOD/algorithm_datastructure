@@ -74,20 +74,24 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     }
 
     LeafNode<K, V> spilt(K key, V value) {
-        add(key, value);
-        List<LNodePair> n0Pair = pairs.stream().limit(size() / 2).collect(Collectors.toList());
-        LeafNode<K, V> n1 = new LeafNode<>(parent);
-        pairs.removeAll(n0Pair);
-        n1.pairs = pairs;
-        pairs = n0Pair;
+        LeafNode<K, V> rightNode = new LeafNode<>(parent);
 
-        n1.next = next;
-        n1.prev = this;
+        // spilt key-pairs between two node
+        add(key, value);
+        List<LNodePair> leftPairs = pairs.stream().limit(size() / 2).collect(Collectors.toList());
+        pairs.removeAll(leftPairs);
+        rightNode.pairs = pairs;
+        pairs = leftPairs;
+
+        // add right node to leaf chain
+        rightNode.next = next;
+        rightNode.prev = this;
         if (nonNull(next)) {
-            next.prev = n1;
+            next.prev = rightNode;
         }
-        next = n1;
-        return n1;
+        next = rightNode;
+
+        return rightNode;
     }
 
     void remove(K key) {
