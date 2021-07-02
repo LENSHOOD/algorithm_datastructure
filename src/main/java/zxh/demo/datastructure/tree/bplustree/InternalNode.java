@@ -1,13 +1,13 @@
 package zxh.demo.datastructure.tree.bplustree;
 
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -47,7 +47,6 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
             return;
         }
 
-        assert parent instanceof InternalNode;
         this.parent = (InternalNode<K>) parent;
     }
 
@@ -74,11 +73,11 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
     }
 
     InternalNode<K> spilt(K key, BptNode<K> pointer) {
-        InternalNode<K> rightNode = new InternalNode<>(parent);
+        var rightNode = new InternalNode<>(parent);
 
         // spilt key-pairs between two node
         add(key, pointer);
-        List<INodePair> leftPairs = pairs.stream().limit(size() / 2 + 1).collect(Collectors.toList());
+        List<INodePair> leftPairs = pairs.stream().limit(size() / 2 + 1L).collect(Collectors.toList());
         pairs.removeAll(leftPairs);
         rightNode.pairs.addAll(pairs);
 
@@ -170,7 +169,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         InternalNode<K>.INodePair leftLast = leftSibling.popLast();
 
         // move last key to parent
-        K parentKey = parent.getByPointer(this);
+        var parentKey = parent.getByPointer(this);
         parent.replacePairKey(this, leftLast.getKey());
 
         // move parent key to me
@@ -188,7 +187,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         rightSibling.add(null, rightFirst.getPointer());
 
         // move right first key to parent
-        K parentKey = parent.getByPointer(rightSibling);
+        var parentKey = parent.getByPointer(rightSibling);
         parent.replacePairKey(rightSibling, rightFirst.getKey());
 
         // move parent key to me
@@ -198,7 +197,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
 
     K mergeToLeft(InternalNode<K> leftSibling) {
         // compose far left pointer with parent key as a new key-pair to be merged to left sibling
-        K parentKey = parent.getByPointer(this);
+        var parentKey = parent.getByPointer(this);
         pairs.get(0).key = parentKey;
 
         // do merge
@@ -212,7 +211,7 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
 
     K mergeToRight(InternalNode<K> rightSibling) {
         // compose right sibling's far left pointer with parent key as a new key-pair
-        K parentKey = rightSibling.parent.getByPointer(rightSibling);
+        var parentKey = rightSibling.parent.getByPointer(rightSibling);
         rightSibling.pairs.get(0).key = parentKey;
 
         // do merge

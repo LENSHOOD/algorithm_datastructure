@@ -1,6 +1,7 @@
 package zxh.demo.datastructure.tree.bplustree;
 
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -33,13 +34,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
      */
     public void add(K key, V value) {
         BptNode<K> curr = findNode(key);
-        K currKey = key;
+        var currKey = key;
         BptNode<K> currChild = null;
         while (true) {
             if (curr.notFull(degree)) {
                 if (isLeafNode(curr)) {
                     ((LeafNode<K, V>) curr).add(currKey, value);
                 } else {
+                    assert curr instanceof InternalNode;
                     ((InternalNode<K>) curr).add(currKey, currChild);
                     if (root != curr && ((InternalNode<K>) curr).hasChild(root)) {
                         root = curr;
@@ -47,13 +49,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
                     }
                 }
 
-                break;
+                return;
             }
 
             if (isLeafNode(curr)) {
                 currChild = ((LeafNode<K, V>) curr).spilt(key, value);
                 currKey = ((LeafNode<K, V>) currChild).getFirst().getKey();
             } else {
+                assert curr instanceof InternalNode;
                 currChild = ((InternalNode<K>) curr).spilt(currKey, currChild);
                 currKey = ((InternalNode<K>) currChild).popFirst().getKey();
             }
@@ -107,7 +110,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 
         BptNode<K> curr = leafNode;
         BptNode<K> prev = null;
-        K currKey = key;
+        var currKey = key;
         while (true) {
             // if number of curr's keys beyond half, then the remove operation can be simply finished
             // remove to root is a special case to be treat with
@@ -155,6 +158,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
 
                 currKey = leafCurr.getParent().getByPointer(leafCurr);
             } else {
+                assert curr instanceof InternalNode;
                 InternalNode<K> internalCurr = (InternalNode<K>) curr;
 
                 // left sibling
@@ -216,14 +220,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
         return node instanceof LeafNode;
     }
 
-    public void print() {
+    public String print() {
         List<Integer> levelCounts = new ArrayList<>();
         getLevelNodeNums(root, 0, levelCounts);
         // add root node count
         levelCounts.add(0, 1);
 
         List<List<String>> levels = new ArrayList<>();
-        int h = 1;
+        var h = 1;
         Deque<BptNode<K>> queue = new ArrayDeque<>();
         BptNode<K> curr = root;
         while (nonNull(curr)){
@@ -262,10 +266,12 @@ public class BPlusTree<K extends Comparable<K>, V> {
             }
         }
 
+        var printResult = new StringBuilder();
         levels.forEach(inner -> {
-            inner.forEach(ns -> System.out.print(ns + " "));
-            System.out.println();
+            inner.forEach(ns -> printResult.append(ns).append(" "));
+            printResult.append("\n");
         });
+        return printResult.toString();
     }
 
     private void getLevelNodeNums(BptNode<K> curr, int height, List<Integer> levels) {
@@ -273,7 +279,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
         if (isLeafNode(curr)) {
             if (levels.size() < height) {
                 int originalSize = levels.size();
-                for (int i = 0; i < height - originalSize - 1; i++) {
+                for (var i = 0; i < height - originalSize - 1; i++) {
                     levels.add(0);
                 }
             }

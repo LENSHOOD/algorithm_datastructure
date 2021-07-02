@@ -7,9 +7,7 @@ import lombok.Getter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +46,6 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
             return;
         }
 
-        assert parent instanceof InternalNode;
         this.parent = (InternalNode<K>) parent;
     }
 
@@ -74,7 +71,7 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     }
 
     LeafNode<K, V> spilt(K key, V value) {
-        LeafNode<K, V> rightNode = new LeafNode<>(parent);
+        var rightNode = new LeafNode<K, V>(parent);
 
         // spilt key-pairs between two node
         add(key, value);
