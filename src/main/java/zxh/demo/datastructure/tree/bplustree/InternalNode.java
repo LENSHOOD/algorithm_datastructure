@@ -92,7 +92,8 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         return rightNode;
     }
 
-    void remove(K key) {
+    @Override
+    public void remove(K key) {
         if (isNull(key)) {
             if (size() == 0) {
                 // shouldn't goes here

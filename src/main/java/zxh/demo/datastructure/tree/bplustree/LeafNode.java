@@ -94,7 +94,8 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
         return rightNode;
     }
 
-    void remove(K key) {
+    @Override
+    public void remove(K key) {
         pairs.removeIf(pair -> pair.getKey().equals(key));
     }
 

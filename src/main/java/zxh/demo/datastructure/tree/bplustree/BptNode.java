@@ -6,6 +6,8 @@ package zxh.demo.datastructure.tree.bplustree;
  * @date 2021/6/16
 */
 public interface BptNode<K extends Comparable<K>> {
+    void remove(K key);
+
     int size();
 
     BptNode<K> getParent();
@@ -17,6 +19,6 @@ public interface BptNode<K extends Comparable<K>> {
     }
 
     default boolean beyondHalf(int degree) {
-        return size() > degree/2 - 1;
+        return size() > degree / 2 - 1;
     }
 }

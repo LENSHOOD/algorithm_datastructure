@@ -454,4 +454,17 @@ class BPlusTreeTest {
         assertThat(newRoot.getPairs().length, is(1));
         assertThat(newRoot.getPairs()[0].getKey(), is(2));
     }
+
+    @Test
+    void should_delete_last_key_of_root() {
+        // given
+        BPlusTree<Integer, Integer> bpt = new BPlusTree<>(3);
+        bpt.add(1, 1);
+
+        // when
+        bpt.remove(1);
+
+        // then
+        assertThat(bpt.getRoot().size(), is(0));
+    }
 }

@@ -109,23 +109,22 @@ public class BPlusTree<K extends Comparable<K>, V> {
         BptNode<K> prev = null;
         K currKey = key;
         while (true) {
+            // if number of curr's keys beyond half, then the remove operation can be simply finished
+            // remove to root is a special case to be treat with
             if (curr.beyondHalf(degree) || curr == root) {
-                if (isLeafNode(curr)) {
-                    ((LeafNode<K, V>) curr).remove(currKey);
-                } else {
-                    ((InternalNode<K>) curr).remove(currKey);
-                }
-
+                curr.remove(currKey);
+                // if the last key of the root has been removed,
+                // then root should be replaced to it's successor (or set to a new root if it has no successor)
                 if (curr.size() == 0) {
-                    root = prev;
+                    root = isNull(prev) ? new LeafNode<>(null) : prev;
                     root.setParent(null);
                 }
                 break;
             }
 
+            curr.remove(currKey);
             if (isLeafNode(curr)) {
                 LeafNode<K, V> leafCurr = (LeafNode<K, V>) curr;
-                leafCurr.remove(currKey);
 
                 // left sibling
                 Optional<LeafNode<K, V>> leftSiblingOp = leafCurr.getLeftSibling();
@@ -160,7 +159,6 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 curr = leafCurr.getParent();
             } else {
                 InternalNode<K> internalCurr = (InternalNode<K>) curr;
-                internalCurr.remove(currKey);
 
                 // left sibling
                 K parentKey;
