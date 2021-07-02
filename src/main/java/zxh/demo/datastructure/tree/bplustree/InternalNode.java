@@ -196,17 +196,33 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         add(parentKey, rightSiblingLeftPointer);
     }
 
-    void mergeRight(K key, InternalNode<K> right) {
-        right.pairs.get(0).key = key;
-        pairs.addAll(right.pairs);
-        pairs.forEach(pair -> pair.pointer.setParent(this));
+    K mergeToLeft(InternalNode<K> leftSibling) {
+        // compose far left pointer with parent key as a new key-pair to be merged to left sibling
+        K parentKey = parent.getByPointer(this);
+        pairs.get(0).key = parentKey;
+
+        // do merge
+        leftSibling.pairs.addAll(pairs);
+
+        // update parent
+        leftSibling.pairs.forEach(pair -> pair.pointer.setParent(leftSibling));
+
+        return parentKey;
     }
 
-    void mergeLeft(InternalNode<K> left, K key) {
-        pairs.get(0).key = key;
-        left.pairs.addAll(pairs);
-        pairs = left.pairs;
-        pairs.forEach(pair -> pair.pointer.setParent(this));
+    K mergeToRight(InternalNode<K> rightSibling) {
+        // compose right sibling's far left pointer with parent key as a new key-pair
+        K parentKey = rightSibling.parent.getByPointer(rightSibling);
+        rightSibling.pairs.get(0).key = parentKey;
+
+        // do merge
+        pairs.addAll(rightSibling.pairs);
+        rightSibling.pairs = pairs;
+
+        // update parent
+        rightSibling.pairs.forEach(pair -> pair.pointer.setParent(rightSibling));
+
+        return parentKey;
     }
 
     BptNode<K> getLeftPointer() {

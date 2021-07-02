@@ -172,21 +172,16 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 }
 
                 // merge
-                K parentKey;
                 if (leftSiblingOp.isPresent()) {
-                    parentKey = internalCurr.getParent().getByPointer(internalCurr);
-                    leftSiblingOp.get().mergeRight(parentKey, internalCurr);
+                    currKey = internalCurr.mergeToLeft(leftSiblingOp.get());
                     prev = leftSiblingOp.get();
                 } else if (rightSiblingOp.isPresent()) {
-                    parentKey = internalCurr.getParent().getByPointer(rightSiblingOp.get());
-                    rightSiblingOp.get().mergeLeft(internalCurr, parentKey);
+                    currKey = internalCurr.mergeToRight(rightSiblingOp.get());
                     prev = rightSiblingOp.get();
                 } else {
                     // shouldn't goes here
                     throw new IllegalStateException();
                 }
-
-                currKey = parentKey;
             }
 
             // current node move to parent
@@ -219,10 +214,6 @@ public class BPlusTree<K extends Comparable<K>, V> {
 
     private static boolean isLeafNode(BptNode<?> node) {
         return node instanceof LeafNode;
-    }
-
-    private static boolean isInternalNode(BptNode<?> node) {
-        return node instanceof InternalNode;
     }
 
     public void print() {
