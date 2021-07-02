@@ -115,18 +115,28 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
         return Optional.of(next);
     }
 
-    K borrowLeft() {
+    void borrowLeft() {
+        // move left sibling's last key to me
         LNodePair leftLast = requireNonNull(prev).getPairs()[prev.size() - 1];
         prev.remove(leftLast.key);
         add(leftLast.key, leftLast.value);
-        return leftLast.key;
+
+        // replace parent key that point to me to the borrowed key
+        // (to fulfill the requirement of all right node key should greater or equal with parent key)
+        parent.replacePairKey(this, leftLast.key);
     }
 
-    K borrowRight() {
+    void borrowRight() {
+        // move right sibling's first key to me
         LNodePair rightFirst = requireNonNull(next).getPairs()[0];
         next.remove(rightFirst.key);
         add(rightFirst.key, rightFirst.value);
-        return rightFirst.key;
+
+        // replace parent key that point to me to the borrowed key,
+        // meanwhile replace parent key that point to right sibling to the right sibling's new first key
+        // (to fulfill the requirement of all right node key should greater or equal with parent key)
+        parent.replacePairKey(this, rightFirst.key);
+        parent.replacePairKey(next, next.getFirst().key);
     }
 
     void mergeToLeft() {

@@ -129,21 +129,19 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 // left sibling
                 Optional<LeafNode<K, V>> leftSiblingOp = leafCurr.getLeftSibling();
                 if (leftSiblingOp.isPresent() && leftSiblingOp.get().beyondHalf(degree)) {
-                    K keyToBeReplaced = leafCurr.borrowLeft();
-                    leafCurr.getParent().replacePairKey(leafCurr, keyToBeReplaced);
+                    leafCurr.borrowLeft();
                     break;
                 }
 
                 // right sibling
                 Optional<LeafNode<K, V>> rightSiblingOp = leafCurr.getRightSibling();
                 if (rightSiblingOp.isPresent() && rightSiblingOp.get().beyondHalf(degree)) {
-                    K keyToBeReplaced = leafCurr.borrowRight();
-                    leafCurr.getParent().replacePairKey(leafCurr, keyToBeReplaced);
-                    leafCurr.getParent().replacePairKey(leafCurr.getNext(), rightSiblingOp.get().getFirst().getKey());
+                    leafCurr.borrowRight();
                     break;
                 }
 
                 // merge
+                // once merge happened, the delete operation will spread to parent level
                 if (leftSiblingOp.isPresent()) {
                     leafCurr.mergeToLeft();
                     prev = leftSiblingOp.get();
@@ -156,7 +154,6 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 }
 
                 currKey = leafCurr.getParent().getByPointer(leafCurr);
-                curr = leafCurr.getParent();
             } else {
                 InternalNode<K> internalCurr = (InternalNode<K>) curr;
 
@@ -213,8 +210,10 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 }
 
                 currKey = parentKey;
-                curr = internalCurr.getParent();
             }
+
+            // current node move to parent
+            curr = curr.getParent();
         }
     }
 
