@@ -22,8 +22,8 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
     @Getter
     @AllArgsConstructor
     class LNodePair {
-        private K key;
-        private V value;
+        private final K key;
+        private final V value;
     }
 
     private InternalNode<K> parent;
@@ -159,10 +159,6 @@ public class LeafNode<K extends Comparable<K>, V> implements BptNode<K> {
 
     LNodePair getFirst() {
         return pairs.get(0);
-    }
-
-    void setNext(LeafNode<K, V> next) {
-        this.next = next;
     }
 
     LNodePair[] getPairs() {

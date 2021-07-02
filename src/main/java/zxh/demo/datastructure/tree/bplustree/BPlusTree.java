@@ -119,7 +119,7 @@ public class BPlusTree<K extends Comparable<K>, V> {
                     root = isNull(prev) ? new LeafNode<>(null) : prev;
                     root.setParent(null);
                 }
-                break;
+                return;
             }
 
             curr.remove(currKey);
@@ -130,14 +130,14 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 Optional<LeafNode<K, V>> leftSiblingOp = leafCurr.getLeftSibling();
                 if (leftSiblingOp.isPresent() && leftSiblingOp.get().beyondHalf(degree)) {
                     leafCurr.borrowLeft();
-                    break;
+                    return;
                 }
 
                 // right sibling
                 Optional<LeafNode<K, V>> rightSiblingOp = leafCurr.getRightSibling();
                 if (rightSiblingOp.isPresent() && rightSiblingOp.get().beyondHalf(degree)) {
                     leafCurr.borrowRight();
-                    break;
+                    return;
                 }
 
                 // merge
@@ -158,44 +158,21 @@ public class BPlusTree<K extends Comparable<K>, V> {
                 InternalNode<K> internalCurr = (InternalNode<K>) curr;
 
                 // left sibling
-                K parentKey;
                 Optional<InternalNode<K>> leftSiblingOp = internalCurr.getLeftSibling();
                 if (leftSiblingOp.isPresent() && leftSiblingOp.get().beyondHalf(degree)) {
-                    // pop left last key
-                    InternalNode<K>.INodePair leftLast = leftSiblingOp.get().popLast();
-
-                    // move last key to parent
-                    parentKey = internalCurr.getParent().getByPointer(internalCurr);
-                    internalCurr.getParent().replacePairKey(internalCurr, leftLast.getKey());
-
-                    // move parent key to right
-                    leftLast.getPointer().setParent(internalCurr);
-                    internalCurr.add(parentKey, internalCurr.getLeftPointer());
-                    internalCurr.add(null, leftLast.getPointer());
-
-                    break;
+                    internalCurr.borrowLeft(leftSiblingOp.get());
+                    return;
                 }
 
                 // right sibling
                 Optional<InternalNode<K>> rightSiblingOp = internalCurr.getRightSibling();
                 if (rightSiblingOp.isPresent() && rightSiblingOp.get().beyondHalf(degree)) {
-                    // pop right first key
-                    InternalNode<K>.INodePair rightFirst = rightSiblingOp.get().popFirst();
-                    BptNode<K> rightNodeLeftPointer = rightSiblingOp.get().getLeftPointer();
-                    rightSiblingOp.get().add(null, rightFirst.getPointer());
-
-                    // move first key to parent
-                    parentKey = internalCurr.getParent().getByPointer(rightSiblingOp.get());
-                    internalCurr.getParent().replacePairKey(rightSiblingOp.get(), rightFirst.getKey());
-
-                    // move parent key to left
-                    rightNodeLeftPointer.setParent(internalCurr);
-                    internalCurr.add(parentKey, rightNodeLeftPointer);
-
-                    break;
+                    internalCurr.borrowRight(rightSiblingOp.get());
+                    return;
                 }
 
                 // merge
+                K parentKey;
                 if (leftSiblingOp.isPresent()) {
                     parentKey = internalCurr.getParent().getByPointer(internalCurr);
                     leftSiblingOp.get().mergeRight(parentKey, internalCurr);

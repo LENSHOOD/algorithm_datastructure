@@ -165,6 +165,37 @@ public class InternalNode<K extends Comparable<K>> implements BptNode<K> {
         throw new IllegalStateException();
     }
 
+    void borrowLeft(InternalNode<K> leftSibling) {
+        // pop left sibling's last key
+        InternalNode<K>.INodePair leftLast = leftSibling.popLast();
+
+        // move last key to parent
+        K parentKey = parent.getByPointer(this);
+        parent.replacePairKey(this, leftLast.getKey());
+
+        // move parent key to me
+        leftLast.getPointer().setParent(this);
+        add(parentKey, getLeftPointer());
+        add(null, leftLast.getPointer());
+    }
+
+    void borrowRight(InternalNode<K> rightSibling) {
+        // pop right sibling's first key
+        InternalNode<K>.INodePair rightFirst = rightSibling.popFirst();
+        BptNode<K> rightSiblingLeftPointer = rightSibling.getLeftPointer();
+
+        // move right sibling's first key's pointer to far left pointer
+        rightSibling.add(null, rightFirst.getPointer());
+
+        // move right first key to parent
+        K parentKey = parent.getByPointer(rightSibling);
+        parent.replacePairKey(rightSibling, rightFirst.getKey());
+
+        // move parent key to me
+        rightSiblingLeftPointer.setParent(this);
+        add(parentKey, rightSiblingLeftPointer);
+    }
+
     void mergeRight(K key, InternalNode<K> right) {
         right.pairs.get(0).key = key;
         pairs.addAll(right.pairs);
