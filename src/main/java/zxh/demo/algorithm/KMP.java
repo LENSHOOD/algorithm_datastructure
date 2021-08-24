@@ -42,4 +42,34 @@ public class KMP {
 
         return next;
     }
+
+    public int match() {
+        if (matcher.length() == 0) {
+            return 0;
+        }
+
+        int[] next = buildNext();
+        int pt = 0, pm = -1;
+        while (pt < text.length()) {
+            // if not match, go back to last substring's longest prefix
+            // then test if it's match, if not, keep go back until get to
+            // beginning of the matcher
+            while (pm >= 0 && text.charAt(pt) != matcher.charAt(pm + 1)) {
+                pm = next[pm];
+            }
+
+            // if current char matched, then extend to test next char
+            if (text.charAt(pt) == matcher.charAt(pm + 1)) {
+                pm++;
+            }
+
+            if (pm == matcher.length() - 1) {
+                return pt - matcher.length() + 1;
+            }
+
+            pt++;
+        }
+
+        return -1;
+    }
 }
